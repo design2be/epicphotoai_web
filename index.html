@@ -886,10 +886,58 @@
           const root = document.querySelector("[data-dating-slider]");
           if (!root) return;
 
-          // IMPORTANT: Dating area must only use images from the dating presets.
-          // We treat "dating presets" as the preset-image manifest (no teaser fallbacks).
-          const presetCandidates = await loadImageManifest("./assets/presets/manifest.json");
-          const images = presetCandidates.length ? await filterLoadableImages(presetCandidates, 36) : [];
+          // IMPORTANT: Dating area must only use images from the dating category.
+          // Source-of-truth: presets.json + manifest.json (no teaser fallbacks).
+          const [presetCandidates, presets] = await Promise.all([
+            loadImageManifest("./assets/presets/manifest.json"),
+            loadPresetsJson("./assets/presets/presets.json"),
+          ]);
+
+          const normSet = (arr) =>
+            new Set(
+              (Array.isArray(arr) ? arr : [])
+                .map((s) => String(s || "").trim().toLowerCase())
+                .filter(Boolean)
+            );
+
+          const hasDatingTag = (p) => {
+            const direct = normSet([p?.category, ...(Array.isArray(p?.categories) ? p.categories : []), ...(Array.isArray(p?.tags) ? p.tags : [])]);
+            const useCases = normSet(p?.useCases);
+            return direct.has("dating") || useCases.has("dating");
+          };
+
+          // If presets.json doesn't explicitly tag dating, fall back to a conservative heuristic.
+          // (Keeps slider from using obviously non-dating presets.)
+          const looksDatingFriendly = (p) => {
+            const id = String(p?.id || "").toLowerCase();
+            if (!id) return false;
+            if (/(wedding|christmas|birthday|conference|guitar|concert|sugar_skull|glam)/.test(id)) return false;
+            const outfit = String(p?.options?.outfitType || "").toLowerCase();
+            if (outfit && (outfit === "business" || outfit === "formal")) return false;
+            const bg = String(p?.options?.backgroundType || "").toLowerCase();
+            if (bg === "office") return false;
+            return true;
+          };
+
+          const datingPresetIds = new Set(
+            presets
+              .filter((p) => hasDatingTag(p) || looksDatingFriendly(p))
+              .map((p) => String(p?.id || "").trim())
+              .filter(Boolean)
+          );
+
+          const idFromUrl = (url) => {
+            const s = String(url || "");
+            const m = s.match(/\/assets\/presets\/(preset_[^\/]+)\.(png|webp|jpg|jpeg)$/i);
+            return m ? m[1] : "";
+          };
+
+          const datingCandidates = (Array.isArray(presetCandidates) ? presetCandidates : []).filter((url) => {
+            const id = idFromUrl(url);
+            return id && datingPresetIds.has(id);
+          });
+
+          const images = datingCandidates.length ? await filterLoadableImages(datingCandidates, 36) : [];
           if (images.length < 2) return;
 
           initDatingSlider(root, images);
