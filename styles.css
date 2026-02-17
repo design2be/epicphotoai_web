@@ -708,6 +708,10 @@ a {
   font-weight: 760;
 }
 
+.usecase__bullets li {
+  padding-bottom: 30px;
+}
+
 .usecase__selling {
   align-self: center;
   padding: 6px 4px;
@@ -849,8 +853,8 @@ a {
     0 18px 44px rgba(0, 0, 0, 0.33),
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
   opacity: 0;
-  transform: translateY(18px) scale(0.7);
-  animation: likeBubbleRise 2.8s ease-out infinite;
+  transform: translateY(18px);
+  animation: likeBubbleRise 2.8s linear infinite;
   will-change: transform, opacity;
 }
 
@@ -872,19 +876,19 @@ a {
 @keyframes likeBubbleRise {
   0% {
     opacity: 0;
-    transform: translateY(18px) scale(0.7);
+    transform: translateY(18px);
   }
-  14% {
+  8% {
     opacity: 1;
-    transform: translateY(0px) scale(1);
+    transform: translateY(0px);
   }
-  64% {
+  72% {
     opacity: 1;
-    transform: translateY(-92px) scale(1.03);
+    transform: translateY(-120px);
   }
   100% {
     opacity: 0;
-    transform: translateY(-170px) scale(1.06);
+    transform: translateY(-170px);
   }
 }
 
