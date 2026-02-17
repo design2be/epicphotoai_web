@@ -686,6 +686,243 @@ a {
   object-fit: cover;
 }
 
+.usecase__pitch {
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.usecase__bullets {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.usecase__bullets strong {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 760;
+}
+
+.usecase__selling {
+  align-self: center;
+  padding: 6px 4px;
+}
+
+.usecase__phone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+/* Phone outcome mock */
+.phoneMock {
+  --pm-radius: 56px;
+  --pm-screen-radius: 44px;
+  --pm-bezel: #0b0b0d;
+  --pm-frame: rgba(255, 255, 255, 0.14);
+
+  width: min(100%, 360px);
+  margin: 0 auto;
+  aspect-ratio: 390 / 844;
+  border-radius: var(--pm-radius);
+  padding: 12px;
+  position: relative;
+
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+}
+
+.phoneMock::before,
+.phoneMock::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  filter: blur(0.1px);
+}
+
+.phoneMock::before {
+  left: -7px;
+  top: 28%;
+  height: 78px;
+}
+
+.phoneMock::after {
+  right: -7px;
+  top: 34%;
+  height: 116px;
+}
+
+.phoneMock__screen {
+  height: 100%;
+  border-radius: var(--pm-screen-radius);
+  overflow: hidden;
+  position: relative;
+  background: #f4f5f7;
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  box-shadow:
+    inset 0 0 0 10px var(--pm-bezel),
+    inset 0 0 0 11px rgba(255, 255, 255, 0.04);
+}
+
+.phoneMock__notch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52%;
+  height: 34px;
+  border-radius: 0 0 20px 20px;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 5;
+}
+
+.phoneMock__topbar {
+  height: 104px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 34px;
+  background: linear-gradient(180deg, #ff4d5b, #ff6a4a);
+  position: relative;
+  z-index: 2;
+}
+
+.phoneMock__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.98);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  user-select: none;
+}
+
+.phoneMock__brandText {
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.phoneMock__brandIcon {
+  display: block;
+  color: rgba(255, 255, 255, 0.98);
+}
+
+.phoneMock__photoWrap {
+  position: absolute;
+  inset: 104px 0 0 0;
+  z-index: 1;
+}
+
+.phoneMock__photo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: saturate(1.03) contrast(1.03);
+}
+
+.phoneMock__card {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 16px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.25);
+  z-index: 3;
+  color: rgba(17, 24, 39, 0.92);
+}
+
+.phoneMock__cardBody {
+  padding: 16px 16px 14px;
+}
+
+.phoneMock__nameRow {
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.phoneMock__name {
+  font-weight: 820;
+}
+
+.phoneMock__age {
+  font-weight: 650;
+  color: rgba(17, 24, 39, 0.72);
+}
+
+.phoneMock__bio {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.35;
+  color: rgba(17, 24, 39, 0.7);
+}
+
+.phoneMock__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 12px 10px;
+  border-top: 1px solid rgba(17, 24, 39, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.phoneMock__action {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.phoneMock__action svg {
+  display: block;
+}
+
+.phoneMock__action--rewind {
+  color: #f7b500;
+}
+
+.phoneMock__action--nope {
+  color: #ef4444;
+}
+
+.phoneMock__action--like {
+  color: #22c55e;
+}
+
+.phoneMock__action--super {
+  color: #3b82f6;
+}
+
+@media (max-width: 420px) {
+  .phoneMock {
+    --pm-radius: 52px;
+    --pm-screen-radius: 40px;
+    padding: 11px;
+  }
+
+  .phoneMock__brandText {
+    font-size: 32px;
+  }
+
+  .phoneMock__nameRow {
+    font-size: 28px;
+  }
+}
+
 @media (max-width: 860px) {
   .styles {
     padding: 56px 16px 72px;
