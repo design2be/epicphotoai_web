@@ -104,6 +104,28 @@
         </div>
       </section>
 
+      <section class="styles" aria-labelledby="pick-your-look">
+        <div class="styles__inner">
+          <header class="styles__header">
+            <h2 id="pick-your-look" class="styles__headline">Pick your look</h2>
+            <p class="styles__subhead">
+              Choose a preset that matches your vibe. Try multiple looks from the same upload—no reshoots.
+            </p>
+          </header>
+
+          <div
+            class="styles__grid"
+            data-styles-grid
+            role="list"
+            aria-label="Preset style examples"
+          ></div>
+
+          <p class="styles__note">
+            Each preset keeps you recognizable while upgrading lighting, mood, and background.
+          </p>
+        </div>
+      </section>
+
       <section class="usecase" aria-label="Social media pictures use case">
         <div class="usecase__inner">
           <header class="usecase__header">
@@ -206,6 +228,189 @@
           const checked = pool.slice(0, Math.max(1, Math.min(pool.length, maxChecks)));
           const results = await Promise.all(checked.map((p) => canLoadImage(p)));
           return checked.filter((p, i) => results[i]);
+        };
+
+        const initStyleShowcase = (imagePool) => {
+          const grid = document.querySelector("[data-styles-grid]");
+          if (!grid) return;
+
+          const fallbackUrl = "./assets/teaser/02.svg";
+          const safePool = Array.isArray(imagePool) && imagePool.length ? imagePool : [];
+
+          const presetMeta = {
+            preset_glam_beauty_closeup: {
+              title: "Glam beauty closeup",
+              desc: "Clean beauty lighting and crisp detail—perfect for profile pics.",
+              tags: ["Portrait", "Beauty", "High-end"],
+            },
+            preset_studio_black_white_portrait: {
+              title: "Studio black & white",
+              desc: "Timeless monochrome with studio contrast that feels premium.",
+              tags: ["Portrait", "Classic", "Editorial"],
+            },
+            preset_night_street_moody: {
+              title: "Night street moody",
+              desc: "Cinematic night energy with dramatic color and atmosphere.",
+              tags: ["Cinematic", "Moody", "Urban"],
+            },
+            preset_private_jet_candid: {
+              title: "Private jet candid",
+              desc: "Jet-set lifestyle vibes—polished, candid, and confident.",
+              tags: ["Lifestyle", "Luxury", "Travel"],
+            },
+            preset_beach_walk_sunset: {
+              title: "Beach walk sunset",
+              desc: "Golden-hour warmth with soft highlights and airy color.",
+              tags: ["Lifestyle", "Warm", "Outdoor"],
+            },
+            preset_conference_speaker_stage: {
+              title: "Conference speaker stage",
+              desc: "Professional presence for founders, creators, and speakers.",
+              tags: ["Professional", "Confident", "Stage"],
+            },
+            preset_gym_mirror_selfie: {
+              title: "Gym mirror selfie",
+              desc: "Fitness-forward look with sharp detail and clean contrast.",
+              tags: ["Fitness", "Crisp", "Modern"],
+            },
+            preset_artistic_sugar_skull: {
+              title: "Artistic sugar skull",
+              desc: "Bold, creative face-paint concept with striking contrast.",
+              tags: ["Artistic", "Bold", "Concept"],
+            },
+            preset_wedding_joy_portrait: {
+              title: "Wedding joy portrait",
+              desc: "Soft, romantic light that captures genuine joy.",
+              tags: ["Romantic", "Soft", "Portrait"],
+            },
+            preset_outdoor_cozy_golden: {
+              title: "Outdoor cozy golden",
+              desc: "Cozy golden tones with flattering light and calm mood.",
+              tags: ["Warm", "Cozy", "Outdoor"],
+            },
+            preset_roses_studio_portrait: {
+              title: "Roses studio portrait",
+              desc: "Studio polish with a romantic set—great for standout posts.",
+              tags: ["Studio", "Romantic", "Styled"],
+            },
+            preset_desert_confident_portrait: {
+              title: "Desert confident portrait",
+              desc: "Bold outdoor portrait with strong light and presence.",
+              tags: ["Outdoor", "Confident", "Editorial"],
+            },
+          };
+
+          const getBasename = (path) => {
+            const clean = String(path || "").split("?")[0];
+            const file = clean.split("/").pop() || "";
+            return file.replace(/\.[a-z0-9]+$/i, "");
+          };
+
+          const titleFromPath = (path) => {
+            const base = getBasename(path).replace(/^preset_/, "");
+            const words = base.split(/[_-]+/g).filter(Boolean);
+            const cap = (w) => (w ? w[0].toUpperCase() + w.slice(1) : w);
+            return words.map(cap).join(" ");
+          };
+
+          const pickByKey = (key) => {
+            const match = safePool.find((p) => String(p).includes(`/${key}.`));
+            return match || "";
+          };
+
+          const preferred = [
+            "preset_glam_beauty_closeup",
+            "preset_studio_black_white_portrait",
+            "preset_night_street_moody",
+            "preset_private_jet_candid",
+            "preset_beach_walk_sunset",
+            "preset_conference_speaker_stage",
+            "preset_gym_mirror_selfie",
+            "preset_artistic_sugar_skull",
+            "preset_wedding_joy_portrait",
+            "preset_outdoor_cozy_golden",
+            "preset_roses_studio_portrait",
+            "preset_desert_confident_portrait",
+          ];
+
+          const chosen = [];
+          for (const key of preferred) {
+            const src = pickByKey(key);
+            if (src) chosen.push({ key, src });
+            if (chosen.length >= 10) break;
+          }
+
+          if (!chosen.length && safePool.length) {
+            // Fall back to first few images if we can't match expected names.
+            const few = safePool.slice(0, 10);
+            for (let i = 0; i < few.length; i++) chosen.push({ key: `fallback_${i}`, src: few[i] });
+          }
+
+          if (!chosen.length) {
+            // Absolute fallback: render a few placeholder cards so the section isn't empty.
+            for (let i = 0; i < 6; i++) chosen.push({ key: `placeholder_${i}`, src: fallbackUrl });
+          }
+
+          const createTag = (label) => {
+            const li = document.createElement("li");
+            li.className = "styleCard__tag";
+            li.textContent = label;
+            return li;
+          };
+
+          const createCard = ({ key, src }, idx) => {
+            const meta = presetMeta[key] || {};
+            const title = meta.title || titleFromPath(src) || `Preset ${idx + 1}`;
+            const desc =
+              meta.desc || "A distinct mood and background you can try instantly from the same upload.";
+            const tags = Array.isArray(meta.tags) && meta.tags.length ? meta.tags : ["Preset"];
+
+            const card = document.createElement("article");
+            card.className = "styleCard";
+            card.setAttribute("role", "listitem");
+
+            const media = document.createElement("div");
+            media.className = "styleCard__media";
+
+            const img = document.createElement("img");
+            img.className = "styleCard__img";
+            img.loading = "lazy";
+            img.decoding = "async";
+            img.alt = `Preset example: ${title}`;
+            img.onerror = () => {
+              img.onerror = null;
+              img.src = fallbackUrl;
+            };
+            img.src = src || fallbackUrl;
+            media.appendChild(img);
+
+            const body = document.createElement("div");
+            body.className = "styleCard__body";
+
+            const h = document.createElement("h3");
+            h.className = "styleCard__title";
+            h.textContent = title;
+
+            const p = document.createElement("p");
+            p.className = "styleCard__desc";
+            p.textContent = desc;
+
+            const ul = document.createElement("ul");
+            ul.className = "styleCard__tags";
+            ul.setAttribute("aria-label", "Tags");
+            for (const t of tags.slice(0, 3)) ul.appendChild(createTag(t));
+
+            body.appendChild(h);
+            body.appendChild(p);
+            body.appendChild(ul);
+
+            card.appendChild(media);
+            card.appendChild(body);
+            return card;
+          };
+
+          grid.innerHTML = "";
+          for (let i = 0; i < chosen.length; i++) grid.appendChild(createCard(chosen[i], i));
         };
 
         const initTeaserColumns = (imagePool) => {
@@ -421,6 +626,8 @@
             if (!images.length) images = ["./assets/teaser/01.svg", "./assets/teaser/02.svg", "./assets/teaser/03.svg"];
 
             initTeaserColumns(images);
+            // For the style showcase, prefer the full preset list so our curated picks are stable.
+            initStyleShowcase(presetCandidates.length ? presetCandidates : images);
 
             const pool = shuffleInPlace(images.slice());
             // Also randomize any explicit "outcome" images that opt in.
