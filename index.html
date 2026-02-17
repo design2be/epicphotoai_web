@@ -111,6 +111,12 @@
             <p class="styles__subhead">
               Choose a preset that matches your vibe. Try multiple looks from the same upload—no reshoots.
             </p>
+            <div
+              class="styles__filters"
+              data-style-filters
+              role="group"
+              aria-label="Preset categories"
+            ></div>
           </header>
 
           <div
@@ -230,126 +236,72 @@
           return checked.filter((p, i) => results[i]);
         };
 
-        const initStyleShowcase = (imagePool) => {
+        const loadPresetsJson = async (url) => {
+          try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) return [];
+            const data = await res.json();
+            const presets = Array.isArray(data?.presets) ? data.presets.filter(Boolean) : [];
+            return presets.filter((p) => typeof p?.id === "string" && p.id.trim());
+          } catch {
+            return [];
+          }
+        };
+
+        const initStyleShowcaseFromPresets = (presetsInput) => {
           const grid = document.querySelector("[data-styles-grid]");
-          if (!grid) return;
+          const filtersRoot = document.querySelector("[data-style-filters]");
+          if (!grid || !filtersRoot) return;
 
           const fallbackUrl = "./assets/teaser/02.svg";
-          const safePool = Array.isArray(imagePool) && imagePool.length ? imagePool : [];
+          const presets = Array.isArray(presetsInput) ? presetsInput : [];
 
-          const presetMeta = {
-            preset_glam_beauty_closeup: {
-              title: "Glam beauty closeup",
-              desc: "Clean beauty lighting and crisp detail—perfect for profile pics.",
-              tags: ["Portrait", "Beauty", "High-end"],
-            },
-            preset_studio_black_white_portrait: {
-              title: "Studio black & white",
-              desc: "Timeless monochrome with studio contrast that feels premium.",
-              tags: ["Portrait", "Classic", "Editorial"],
-            },
-            preset_night_street_moody: {
-              title: "Night street moody",
-              desc: "Cinematic night energy with dramatic color and atmosphere.",
-              tags: ["Cinematic", "Moody", "Urban"],
-            },
-            preset_private_jet_candid: {
-              title: "Private jet candid",
-              desc: "Jet-set lifestyle vibes—polished, candid, and confident.",
-              tags: ["Lifestyle", "Luxury", "Travel"],
-            },
-            preset_beach_walk_sunset: {
-              title: "Beach walk sunset",
-              desc: "Golden-hour warmth with soft highlights and airy color.",
-              tags: ["Lifestyle", "Warm", "Outdoor"],
-            },
-            preset_conference_speaker_stage: {
-              title: "Conference speaker stage",
-              desc: "Professional presence for founders, creators, and speakers.",
-              tags: ["Professional", "Confident", "Stage"],
-            },
-            preset_gym_mirror_selfie: {
-              title: "Gym mirror selfie",
-              desc: "Fitness-forward look with sharp detail and clean contrast.",
-              tags: ["Fitness", "Crisp", "Modern"],
-            },
-            preset_artistic_sugar_skull: {
-              title: "Artistic sugar skull",
-              desc: "Bold, creative face-paint concept with striking contrast.",
-              tags: ["Artistic", "Bold", "Concept"],
-            },
-            preset_wedding_joy_portrait: {
-              title: "Wedding joy portrait",
-              desc: "Soft, romantic light that captures genuine joy.",
-              tags: ["Romantic", "Soft", "Portrait"],
-            },
-            preset_outdoor_cozy_golden: {
-              title: "Outdoor cozy golden",
-              desc: "Cozy golden tones with flattering light and calm mood.",
-              tags: ["Warm", "Cozy", "Outdoor"],
-            },
-            preset_roses_studio_portrait: {
-              title: "Roses studio portrait",
-              desc: "Studio polish with a romantic set—great for standout posts.",
-              tags: ["Studio", "Romantic", "Styled"],
-            },
-            preset_desert_confident_portrait: {
-              title: "Desert confident portrait",
-              desc: "Bold outdoor portrait with strong light and presence.",
-              tags: ["Outdoor", "Confident", "Editorial"],
-            },
-          };
-
-          const getBasename = (path) => {
-            const clean = String(path || "").split("?")[0];
-            const file = clean.split("/").pop() || "";
-            return file.replace(/\.[a-z0-9]+$/i, "");
-          };
-
-          const titleFromPath = (path) => {
-            const base = getBasename(path).replace(/^preset_/, "");
-            const words = base.split(/[_-]+/g).filter(Boolean);
-            const cap = (w) => (w ? w[0].toUpperCase() + w.slice(1) : w);
-            return words.map(cap).join(" ");
-          };
-
-          const pickByKey = (key) => {
-            const match = safePool.find((p) => String(p).includes(`/${key}.`));
-            return match || "";
-          };
-
-          const preferred = [
-            "preset_glam_beauty_closeup",
-            "preset_studio_black_white_portrait",
-            "preset_night_street_moody",
-            "preset_private_jet_candid",
-            "preset_beach_walk_sunset",
-            "preset_conference_speaker_stage",
-            "preset_gym_mirror_selfie",
-            "preset_artistic_sugar_skull",
-            "preset_wedding_joy_portrait",
-            "preset_outdoor_cozy_golden",
-            "preset_roses_studio_portrait",
-            "preset_desert_confident_portrait",
-          ];
-
-          const chosen = [];
-          for (const key of preferred) {
-            const src = pickByKey(key);
-            if (src) chosen.push({ key, src });
-            if (chosen.length >= 10) break;
+          // Deduplicate by id (presets.json may contain duplicates).
+          const byId = new Map();
+          for (const p of presets) {
+            const id = String(p?.id || "").trim();
+            if (!id) continue;
+            if (!byId.has(id)) byId.set(id, p);
           }
+          const uniquePresets = Array.from(byId.values());
 
-          if (!chosen.length && safePool.length) {
-            // Fall back to first few images if we can't match expected names.
-            const few = safePool.slice(0, 10);
-            for (let i = 0; i < few.length; i++) chosen.push({ key: `fallback_${i}`, src: few[i] });
-          }
+          const getCategoryKey = (p) =>
+            String(p?.options?.backgroundType || "other")
+              .trim()
+              .toLowerCase() || "other";
 
-          if (!chosen.length) {
-            // Absolute fallback: render a few placeholder cards so the section isn't empty.
-            for (let i = 0; i < 6; i++) chosen.push({ key: `placeholder_${i}`, src: fallbackUrl });
-          }
+          const humanize = (s) =>
+            String(s || "")
+              .trim()
+              .replace(/[_-]+/g, " ")
+              .replace(/\s+/g, " ")
+              .replace(/\b\w/g, (m) => m.toUpperCase());
+
+          const categoryOrder = ["studio", "travel", "nature", "city", "home", "office", "cafe", "gym", "other"];
+
+          const categoriesSet = new Set(uniquePresets.map(getCategoryKey));
+          const categories = ["all"]
+            .concat(
+              Array.from(categoriesSet)
+                .filter((c) => c && c !== "all")
+                .sort((a, b) => {
+                  const ia = categoryOrder.indexOf(a);
+                  const ib = categoryOrder.indexOf(b);
+                  if (ia !== -1 || ib !== -1) return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+                  return a.localeCompare(b);
+                })
+            );
+
+          const buildTags = (p) => {
+            const tags = [];
+            const bg = p?.options?.backgroundType ? humanize(p.options.backgroundType) : "";
+            const tod = p?.options?.timeOfDay ? humanize(p.options.timeOfDay) : "";
+            const outfit = p?.options?.outfitType ? humanize(p.options.outfitType) : "";
+            if (bg) tags.push(bg);
+            if (tod) tags.push(tod);
+            if (outfit) tags.push(outfit);
+            return tags.length ? tags : ["Preset"];
+          };
 
           const createTag = (label) => {
             const li = document.createElement("li");
@@ -358,12 +310,12 @@
             return li;
           };
 
-          const createCard = ({ key, src }, idx) => {
-            const meta = presetMeta[key] || {};
-            const title = meta.title || titleFromPath(src) || `Preset ${idx + 1}`;
+          const createCard = (preset) => {
+            const id = String(preset?.id || "").trim();
+            const title = String(preset?.title || "").trim() || humanize(id.replace(/^preset_/, ""));
             const desc =
-              meta.desc || "A distinct mood and background you can try instantly from the same upload.";
-            const tags = Array.isArray(meta.tags) && meta.tags.length ? meta.tags : ["Preset"];
+              String(preset?.description || "").trim() ||
+              "A distinct mood and background you can try instantly from the same upload.";
 
             const card = document.createElement("article");
             card.className = "styleCard";
@@ -381,7 +333,8 @@
               img.onerror = null;
               img.src = fallbackUrl;
             };
-            img.src = src || fallbackUrl;
+            // Convention: preset image file uses preset id.
+            img.src = id ? `./assets/presets/${id}.png` : fallbackUrl;
             media.appendChild(img);
 
             const body = document.createElement("div");
@@ -398,7 +351,7 @@
             const ul = document.createElement("ul");
             ul.className = "styleCard__tags";
             ul.setAttribute("aria-label", "Tags");
-            for (const t of tags.slice(0, 3)) ul.appendChild(createTag(t));
+            for (const t of buildTags(preset).slice(0, 3)) ul.appendChild(createTag(t));
 
             body.appendChild(h);
             body.appendChild(p);
@@ -409,8 +362,48 @@
             return card;
           };
 
-          grid.innerHTML = "";
-          for (let i = 0; i < chosen.length; i++) grid.appendChild(createCard(chosen[i], i));
+          let activeCategory = "all";
+
+          const renderGrid = () => {
+            const list =
+              activeCategory === "all"
+                ? uniquePresets
+                : uniquePresets.filter((p) => getCategoryKey(p) === activeCategory);
+
+            grid.innerHTML = "";
+            for (const p of list) grid.appendChild(createCard(p));
+          };
+
+          const setActiveButton = (categoryKey) => {
+            const buttons = Array.from(filtersRoot.querySelectorAll("button.styles__filterBtn[data-category]"));
+            for (const btn of buttons) {
+              const isActive = btn.getAttribute("data-category") === categoryKey;
+              btn.classList.toggle("is-active", isActive);
+              btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+            }
+          };
+
+          const renderButtons = () => {
+            filtersRoot.innerHTML = "";
+            for (const key of categories) {
+              const btn = document.createElement("button");
+              btn.type = "button";
+              btn.className = "styles__filterBtn";
+              btn.setAttribute("data-category", key);
+              btn.setAttribute("aria-pressed", key === activeCategory ? "true" : "false");
+              btn.textContent = key === "all" ? "All" : humanize(key);
+              btn.addEventListener("click", () => {
+                activeCategory = key;
+                setActiveButton(activeCategory);
+                renderGrid();
+              });
+              filtersRoot.appendChild(btn);
+            }
+            setActiveButton(activeCategory);
+          };
+
+          renderButtons();
+          renderGrid();
         };
 
         const initTeaserColumns = (imagePool) => {
@@ -626,8 +619,6 @@
             if (!images.length) images = ["./assets/teaser/01.svg", "./assets/teaser/02.svg", "./assets/teaser/03.svg"];
 
             initTeaserColumns(images);
-            // For the style showcase, prefer the full preset list so our curated picks are stable.
-            initStyleShowcase(presetCandidates.length ? presetCandidates : images);
 
             const pool = shuffleInPlace(images.slice());
             // Also randomize any explicit "outcome" images that opt in.
@@ -646,7 +637,20 @@
           }
         };
 
+        const applyStylePresets = async () => {
+          const presets = await loadPresetsJson("./assets/presets/presets.json");
+          if (presets.length) {
+            initStyleShowcaseFromPresets(presets);
+            return;
+          }
+          // Fallback: keep section non-empty if presets.json can't load.
+          initStyleShowcaseFromPresets([
+            { id: "", title: "Preset library", description: "Add presets to `assets/presets/presets.json` to see them here.", options: { backgroundType: "other" } },
+          ]);
+        };
+
         applyTeaserManifest();
+        applyStylePresets();
       })();
     </script>
   </body>
