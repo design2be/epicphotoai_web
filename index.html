@@ -193,14 +193,24 @@
                   </header>
 
                   <div class="phoneMock__photoWrap" aria-hidden="true">
-                    <img
-                      class="phoneMock__photo"
-                      data-random-preset="true"
-                      src="./assets/teaser/02.svg"
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <div class="phoneMock__slider" data-dating-slider>
+                      <img
+                        class="phoneMock__sliderImg phoneMock__sliderImg--next"
+                        data-dating-next
+                        src="./assets/presets/preset_cafe_relaxed_moment.png"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <img
+                        class="phoneMock__sliderImg phoneMock__sliderImg--current"
+                        data-dating-current
+                        src="./assets/presets/preset_beach_walk_sunset.png"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
                   </div>
 
                   <section class="phoneMock__card" aria-label="Profile card">
@@ -735,8 +745,159 @@
           ]);
         };
 
+        const initDatingSlider = (root, images) => {
+          const imgCurrent = root.querySelector("[data-dating-current]");
+          const imgNext = root.querySelector("[data-dating-next]");
+          if (!imgCurrent || !imgNext) return;
+
+          const pool = Array.isArray(images) ? images.filter(Boolean) : [];
+          if (pool.length < 2) return;
+
+          let currentIdx = 0;
+          let nextIdx = 1;
+
+          const setSrcSafe = (img, src) => {
+            if (!src) return;
+            img.onerror = () => {
+              img.onerror = null;
+              // If a preset image fails to load, keep whatever is currently showing.
+            };
+            img.src = src;
+          };
+
+          setSrcSafe(imgCurrent, pool[currentIdx]);
+          setSrcSafe(imgNext, pool[nextIdx]);
+
+          let dragging = false;
+          let animating = false;
+          let startX = 0;
+          let startOffset = 0;
+          let offset = 0;
+          const AUTOPLAY_MS = 3000;
+
+          const widthPx = () => Math.max(1, root.getBoundingClientRect().width || 1);
+          const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+
+          const setOffset = (px) => {
+            offset = clamp(px, 0, widthPx());
+            imgCurrent.style.transform = `translateX(${offset}px)`;
+          };
+
+          const setAnimating = (on) => {
+            animating = on;
+            root.classList.toggle("is-animating", on);
+          };
+
+          const setDragging = (on) => {
+            dragging = on;
+            root.classList.toggle("is-dragging", on);
+          };
+
+          const advance = () => {
+            if (animating) return;
+            setAnimating(true);
+            setOffset(widthPx());
+
+            let finished = false;
+            let fallbackTimer = 0;
+
+            const onDone = () => {
+              if (finished) return;
+              finished = true;
+              if (fallbackTimer) window.clearTimeout(fallbackTimer);
+
+              // Promote next -> current.
+              currentIdx = nextIdx;
+              nextIdx = (nextIdx + 1) % pool.length;
+
+              setAnimating(false);
+              // Snap back without transition.
+              imgCurrent.style.transform = "translateX(0px)";
+              setSrcSafe(imgCurrent, pool[currentIdx]);
+              setSrcSafe(imgNext, pool[nextIdx]);
+              offset = 0;
+            };
+
+            imgCurrent.addEventListener("transitionend", onDone, { once: true });
+            // Fallback in case transitionend doesn't fire (e.g. background tab).
+            fallbackTimer = window.setTimeout(onDone, 320);
+          };
+
+          const revert = () => {
+            if (animating) return;
+            setAnimating(true);
+            setOffset(0);
+            imgCurrent.addEventListener(
+              "transitionend",
+              () => {
+                setAnimating(false);
+              },
+              { once: true }
+            );
+          };
+
+          root.addEventListener("pointerdown", (e) => {
+            if (animating) return;
+            // Only primary button for mouse; pointerType touch/pen is fine.
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+            setDragging(true);
+            startX = e.clientX;
+            startOffset = offset;
+            root.setPointerCapture?.(e.pointerId);
+          });
+
+          root.addEventListener("pointermove", (e) => {
+            if (!dragging || animating) return;
+            const dx = e.clientX - startX;
+            // Only allow left->right reveal.
+            setOffset(startOffset + Math.max(0, dx));
+          });
+
+          const endDrag = () => {
+            if (!dragging) return;
+            setDragging(false);
+            const w = widthPx();
+            const threshold = w * 0.35;
+            if (offset >= threshold) advance();
+            else revert();
+          };
+
+          root.addEventListener("pointerup", endDrag);
+          root.addEventListener("pointercancel", endDrag);
+          root.addEventListener("lostpointercapture", endDrag);
+
+          // Autoplay: slide to next picture every 3 seconds.
+          const intervalId = window.setInterval(() => {
+            if (dragging || animating) return;
+            advance();
+          }, AUTOPLAY_MS);
+
+          // Cleanup if the element is removed (best-effort).
+          const mo = new MutationObserver(() => {
+            if (!document.body.contains(root)) {
+              window.clearInterval(intervalId);
+              mo.disconnect();
+            }
+          });
+          mo.observe(document.body, { childList: true, subtree: true });
+        };
+
+        const applyDatingSlider = async () => {
+          const root = document.querySelector("[data-dating-slider]");
+          if (!root) return;
+
+          // IMPORTANT: Dating area must only use images from the dating presets.
+          // We treat "dating presets" as the preset-image manifest (no teaser fallbacks).
+          const presetCandidates = await loadImageManifest("./assets/presets/manifest.json");
+          const images = presetCandidates.length ? await filterLoadableImages(presetCandidates, 36) : [];
+          if (images.length < 2) return;
+
+          initDatingSlider(root, images);
+        };
+
         applyTeaserManifest();
         applyStylePresets();
+        applyDatingSlider();
       })();
     </script>
   </body>
