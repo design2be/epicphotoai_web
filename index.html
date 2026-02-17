@@ -150,6 +150,24 @@
                   Better photos simply help people notice you and swipe right more often.
                 </li>
                 <li>
+                  <strong>
+                    <svg
+                      class="usecase__heartIcon"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                      />
+                    </svg>
+                    Before: 0 Likes, with EpicPhotos XXX Likes
+                  </strong>
+                </li>
+                <li>
                   <strong>Feel more confident putting yourself out there</strong><br>
                   When you like your photos,
                   you&rsquo;re less hesitant to start conversations.
@@ -497,6 +515,103 @@
                   The goal is upgraded photos, not a different person.
                 </li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="usecase" aria-label="Personal branding photos use case">
+        <div class="usecase__inner">
+          <header class="usecase__header">
+            <h2 class="usecase__headline">Personal Branding<br>Look credible everywhere</h2>
+            <p class="usecase__subhead">
+              Professional-grade photos for LinkedIn, your website, press, and announcements — without booking a shoot.
+            </p>
+          </header>
+
+          <div class="usecase__grid" role="list" aria-label="Personal branding selling points and professional photo preview">
+            <div class="usecase__selling" role="listitem" aria-label="Why EpicPhotoAI works for personal branding">
+              <ul class="usecase__bullets" aria-label="Why EpicPhotoAI works for personal branding">
+                <li>
+                  <strong>Instant LinkedIn-ready photos</strong><br>
+                  Clean, polished, and still recognizable as you.
+                </li>
+                <li>
+                  <strong>Consistent look across platforms</strong><br>
+                  Use the same vibe for your site, bio, thumbnails, and profiles.
+                </li>
+                <li>
+                  <strong>Build trust at a glance</strong><br>
+                  High-quality photos help clients and employers take you seriously.
+                </li>
+                <li>
+                  <strong>Perfect for founders &amp; speakers</strong><br>
+                  Get a set for press kits, event promos, and announcements.
+                </li>
+                <li>
+                  <strong>No scheduling, no studio fees</strong><br>
+                  Generate multiple professional looks from one upload.
+                </li>
+              </ul>
+            </div>
+
+            <div class="usecase__phone" role="listitem" aria-label="Professional photo examples">
+              <div class="brandGallery" data-brand-gallery>
+                <div class="brandGallery__top" aria-hidden="true">
+                  <span class="brandGallery__pill">Professional</span>
+                  <span class="brandGallery__topText">Personal brand set</span>
+                </div>
+                <div class="brandGallery__grid">
+                  <img
+                    class="brandGallery__img"
+                    data-brand-img
+                    src="./assets/teaser/01.svg"
+                    alt="Professional photo example"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <img
+                    class="brandGallery__img"
+                    data-brand-img
+                    src="./assets/teaser/02.svg"
+                    alt="Professional photo example"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <img
+                    class="brandGallery__img"
+                    data-brand-img
+                    src="./assets/teaser/03.svg"
+                    alt="Professional photo example"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <img
+                    class="brandGallery__img"
+                    data-brand-img
+                    src="./assets/teaser/01.svg"
+                    alt="Professional photo example"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <img
+                    class="brandGallery__img"
+                    data-brand-img
+                    src="./assets/teaser/02.svg"
+                    alt="Professional photo example"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <img
+                    class="brandGallery__img"
+                    data-brand-img
+                    src="./assets/teaser/03.svg"
+                    alt="Professional photo example"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1182,9 +1297,70 @@
           initDatingSlider(root, images);
         };
 
+        const applyBrandGallery = async () => {
+          const root = document.querySelector("[data-brand-gallery]");
+          if (!root) return;
+
+          const imgEls = Array.from(root.querySelectorAll("img[data-brand-img]"));
+          if (!imgEls.length) return;
+
+          // Personal branding: favor professional-looking presets.
+          // Source-of-truth: presets.json + manifest.json (no teaser fallbacks).
+          const [presetCandidates, presets] = await Promise.all([
+            loadImageManifest("./assets/presets/manifest.json"),
+            loadPresetsJson("./assets/presets/presets.json"),
+          ]);
+
+          const isProfessional = (p) => {
+            const bg = String(p?.options?.backgroundType || "").trim().toLowerCase();
+            const outfit = String(p?.options?.outfitType || "").trim().toLowerCase();
+            const shot = String(p?.options?.shotType || "").trim().toLowerCase();
+            // "office" + "studio" are the closest thing to a professional category in the current preset schema.
+            if (bg === "office" || bg === "studio") return true;
+            if (outfit === "business" || outfit === "formal") return true;
+            // Headshots are usually "professional" even when background is "other".
+            if (shot === "headshot") return true;
+            return false;
+          };
+
+          const professionalPresetIds = new Set(
+            (Array.isArray(presets) ? presets : [])
+              .filter((p) => isProfessional(p))
+              .map((p) => String(p?.id || "").trim())
+              .filter(Boolean)
+          );
+
+          const idFromUrl = (url) => {
+            const s = String(url || "");
+            const m = s.match(/\/assets\/presets\/(preset_[^\/]+)\.(png|webp|jpg|jpeg)$/i);
+            return m ? m[1] : "";
+          };
+
+          const candidates = (Array.isArray(presetCandidates) ? presetCandidates : []).filter((url) => {
+            const id = idFromUrl(url);
+            return id && professionalPresetIds.has(id);
+          });
+
+          const images = candidates.length ? await filterLoadableImages(candidates, 36) : [];
+          if (!images.length) return;
+
+          const pool = shuffleInPlace(images.slice());
+          for (let i = 0; i < imgEls.length; i++) {
+            const img = imgEls[i];
+            const src = pool[i % pool.length];
+            if (!src) continue;
+            img.onerror = () => {
+              img.onerror = null;
+              img.src = "./assets/teaser/02.svg";
+            };
+            img.src = src;
+          }
+        };
+
         applyTeaserManifest();
         applyStylePresets();
         applyDatingSlider();
+        applyBrandGallery();
       })();
     </script>
   </body>
