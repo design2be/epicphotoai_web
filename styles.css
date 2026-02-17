@@ -1265,6 +1265,67 @@ a {
   font-size: 12px;
 }
 
+/* Floating heart "like" animation */
+.igMock__likeFx {
+  position: absolute;
+  inset: 96px 0 70px 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.igMock__heart {
+  position: absolute;
+  right: 16px;
+  bottom: 24px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: rgba(239, 68, 68, 0.98);
+  opacity: 0;
+  transform: translate3d(0, 12px, 0) scale(0.9);
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.18));
+  animation: igHeartFloat 2.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.igMock__heart--a {
+  animation-delay: 0ms;
+}
+
+.igMock__heart--b {
+  right: 28px;
+  bottom: 18px;
+  color: rgba(236, 72, 153, 0.98);
+  animation-delay: 420ms;
+}
+
+.igMock__heart--c {
+  right: 22px;
+  bottom: 34px;
+  color: rgba(248, 113, 113, 0.98);
+  animation-delay: 860ms;
+}
+
+@keyframes igHeartFloat {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.88);
+  }
+  14% {
+    opacity: 1;
+    transform: translate3d(-6px, 0px, 0) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translate3d(-24px, -140px, 0) scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-34px, -190px, 0) scale(0.92);
+  }
+}
+
 @media (max-width: 420px) {
   .phoneMock {
     --pm-radius: 52px;
@@ -1312,6 +1373,12 @@ a {
 
   .usecase__grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .igMock__likeFx {
+    display: none;
   }
 }
 
