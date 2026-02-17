@@ -26,120 +26,7 @@
     <main>
       <section class="teaser" aria-label="Teaser">
         <div class="teaser__media" aria-hidden="true">
-          <div class="teaser__track">
-            <div class="teaser__collage">
-              <img
-                class="teaser__tile"
-                data-teaser-slot="0"
-                src="./assets/teaser/01.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="1"
-                src="./assets/teaser/02.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="2"
-                src="./assets/teaser/03.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="3"
-                src="./assets/teaser/02.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="4"
-                src="./assets/teaser/01.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="5"
-                src="./assets/teaser/03.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="6"
-                src="./assets/teaser/03.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="7"
-                src="./assets/teaser/01.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="8"
-                src="./assets/teaser/02.svg"
-                alt=""
-              />
-            </div>
-            <div class="teaser__collage" aria-hidden="true">
-              <img
-                class="teaser__tile"
-                data-teaser-slot="0"
-                src="./assets/teaser/01.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="1"
-                src="./assets/teaser/02.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="2"
-                src="./assets/teaser/03.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="3"
-                src="./assets/teaser/02.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="4"
-                src="./assets/teaser/01.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="5"
-                src="./assets/teaser/03.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="6"
-                src="./assets/teaser/03.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="7"
-                src="./assets/teaser/01.svg"
-                alt=""
-              />
-              <img
-                class="teaser__tile"
-                data-teaser-slot="8"
-                src="./assets/teaser/02.svg"
-                alt=""
-              />
-            </div>
-          </div>
+          <div class="teaser__cols" data-teaser-cols></div>
           <div class="teaser__overlay"></div>
         </div>
 
@@ -252,12 +139,204 @@
           return checked.filter((p, i) => results[i]);
         };
 
-        const applyTeaserManifest = async () => {
-          const tiles = Array.from(
-            document.querySelectorAll(".teaser__collage img.teaser__tile")
-          );
-          if (!tiles.length) return;
+        const initTeaserColumns = (imagePool) => {
+          const colsRoot = document.querySelector(".teaser__cols[data-teaser-cols]");
+          if (!colsRoot) return;
 
+          const prefersReducedMotion =
+            window.matchMedia &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+          const fallbackUrl = "./assets/teaser/02.svg";
+          const safePool = Array.isArray(imagePool) && imagePool.length ? imagePool : [fallbackUrl];
+
+          const pickRandom = (avoid = []) => {
+            if (safePool.length === 1) return safePool[0];
+            for (let i = 0; i < 8; i++) {
+              const next = safePool[Math.floor(Math.random() * safePool.length)];
+              if (!avoid.includes(next)) return next;
+            }
+            return safePool[Math.floor(Math.random() * safePool.length)];
+          };
+
+          const createTile = (src) => {
+            const img = document.createElement("img");
+            img.className = "teaser__tile";
+            img.alt = "";
+            img.loading = "lazy";
+            img.decoding = "async";
+            img.onerror = () => {
+              img.onerror = null;
+              img.src = fallbackUrl;
+            };
+            img.src = src;
+            return img;
+          };
+
+          const getSpeed = (colEl) => {
+            const raw = getComputedStyle(colEl).getPropertyValue("--teaser-speed").trim();
+            const v = parseFloat(raw);
+            return Number.isFinite(v) && v > 0 ? v : 18;
+          };
+
+          const getOffset = (colEl) => {
+            const raw = getComputedStyle(colEl).getPropertyValue("--teaser-offset").trim();
+            const v = parseFloat(raw);
+            return Number.isFinite(v) ? v : 0;
+          };
+
+          const getGapPx = (stackEl) => {
+            const cs = getComputedStyle(stackEl);
+            const g = cs.rowGap || cs.gap || "0px";
+            const px = parseFloat(g);
+            return Number.isFinite(px) ? px : 0;
+          };
+
+          const ensureFilled = (state) => {
+            const { stack, viewport } = state;
+            // Keep enough content so we never show empty space.
+            const target = viewport.clientHeight + Math.max(0, -state.y) + viewport.clientHeight * 1.25;
+            const avoid = state.recent.slice(-3);
+            while (stack.scrollHeight < target) {
+              const next = pickRandom(avoid);
+              stack.appendChild(createTile(next));
+              state.recent.push(next);
+              if (state.recent.length > 10) state.recent = state.recent.slice(-10);
+            }
+          };
+
+          const desiredColumnCount = () => {
+            // Requirements:
+            // - iPhone: 3 cols
+            // - 4K screens: 8 cols
+            // Use a reasonable min column width and clamp [3..8].
+            const w = colsRoot.clientWidth || window.innerWidth || 0;
+            const minColW = 240; // px
+            const guess = Math.floor(w / minColW);
+            return Math.max(3, Math.min(8, guess || 3));
+          };
+
+          const buildColumns = (count) => {
+            colsRoot.style.setProperty("--teaser-cols", String(count));
+            colsRoot.innerHTML = "";
+
+            for (let i = 0; i < count; i++) {
+              const col = document.createElement("div");
+              col.className = "teaser__col";
+
+              // Different upward speeds (px/s) and random start offsets (px).
+              const speed = 16 + (i % 5) * 2 + Math.random() * 3;
+              const offset = 60 + Math.random() * 520;
+              col.style.setProperty("--teaser-speed", String(speed.toFixed(2)));
+              col.style.setProperty("--teaser-offset", String(offset.toFixed(0)));
+
+              const stack = document.createElement("div");
+              stack.className = "teaser__colStack";
+              stack.setAttribute("data-teaser-col", String(i));
+
+              // Seed a few initial tiles so layout is stable while we fill.
+              for (let k = 0; k < 4; k++) {
+                stack.appendChild(createTile(pickRandom()));
+              }
+
+              col.appendChild(stack);
+              colsRoot.appendChild(col);
+            }
+          };
+
+          let rafId = 0;
+          let currentCols = 0;
+          let states = [];
+          let lastT = performance.now();
+          let resizeTimer = 0;
+
+          const stop = () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = 0;
+          };
+
+          const start = () => {
+            stop();
+            lastT = performance.now();
+            rafId = requestAnimationFrame(tick);
+          };
+
+          const rebuild = () => {
+            const nextCols = desiredColumnCount();
+            if (nextCols !== currentCols) {
+              currentCols = nextCols;
+              buildColumns(currentCols);
+            }
+
+            const stacks = Array.from(colsRoot.querySelectorAll(".teaser__colStack[data-teaser-col]"));
+            states = stacks.map((stack) => {
+              const colEl = stack.closest(".teaser__col");
+              return {
+                colEl,
+                viewport: colEl,
+                stack,
+                y: -getOffset(colEl),
+                speed: getSpeed(colEl), // px / second
+                gapPx: getGapPx(stack),
+                recent: [],
+              };
+            });
+
+            for (const s of states) {
+              // Capture current sources as "recent" to reduce duplicates.
+              const existing = Array.from(s.stack.querySelectorAll("img.teaser__tile"));
+              s.recent = existing.map((img) => img.currentSrc || img.src).filter(Boolean).slice(-10);
+              ensureFilled(s);
+              s.stack.style.transform = `translateY(${s.y}px)`;
+            }
+
+            if (!prefersReducedMotion) start();
+          };
+
+          const onResize = () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(rebuild, 120);
+          };
+
+          const tick = (t) => {
+            const dt = Math.min(0.05, (t - lastT) / 1000);
+            lastT = t;
+
+            for (const s of states) {
+              s.y -= s.speed * dt;
+              s.stack.style.transform = `translateY(${s.y}px)`;
+
+              // When the first tile fully leaves the viewport, remove it and append a new one.
+              // Adjust y so the scroll is continuous (no visible reset).
+              let first = s.stack.firstElementChild;
+              while (first) {
+                const h = first.offsetHeight || first.getBoundingClientRect().height;
+                const step = h + s.gapPx;
+                if (-s.y < step) break;
+
+                s.y += step;
+                s.stack.style.transform = `translateY(${s.y}px)`;
+                s.stack.removeChild(first);
+
+                const next = pickRandom(s.recent.slice(-3));
+                s.stack.appendChild(createTile(next));
+                s.recent.push(next);
+                if (s.recent.length > 10) s.recent = s.recent.slice(-10);
+
+                first = s.stack.firstElementChild;
+              }
+
+              ensureFilled(s);
+            }
+
+            rafId = requestAnimationFrame(tick);
+          };
+
+          window.addEventListener("resize", onResize, { passive: true });
+          rebuild();
+        };
+
+        const applyTeaserManifest = async () => {
           try {
             const presetCandidates = await loadImageManifest("./assets/presets/manifest.json");
             let images = presetCandidates.length
@@ -269,31 +348,12 @@
               images = fallback.length ? await filterLoadableImages(fallback, 10) : [];
             }
 
-            if (!images.length) return;
+            // If we can't load manifests, keep placeholder SVGs as pool.
+            if (!images.length) images = ["./assets/teaser/01.svg", "./assets/teaser/02.svg", "./assets/teaser/03.svg"];
 
-            // Ensure the loop seam is invisible by applying the same image
-            // to the same "slot" in both duplicated collages.
-            const slots = new Map();
-            for (const img of tiles) {
-              const slot = img.getAttribute("data-teaser-slot") ?? "";
-              if (!slots.has(slot)) slots.set(slot, []);
-              slots.get(slot).push(img);
-            }
+            initTeaserColumns(images);
 
-            const slotKeys = Array.from(slots.keys()).sort((a, b) => Number(a) - Number(b));
             const pool = shuffleInPlace(images.slice());
-            slotKeys.forEach((slot, i) => {
-              const next = pool[i % pool.length];
-              if (typeof next !== "string" || !next) return;
-              for (const img of slots.get(slot)) {
-                img.onerror = () => {
-                  img.onerror = null;
-                  img.src = "./assets/teaser/02.svg";
-                };
-                img.src = next;
-              }
-            });
-
             // Also randomize any explicit "outcome" images that opt in.
             const randomTargets = Array.from(document.querySelectorAll("img[data-random-preset='true']"));
             for (const img of randomTargets) {

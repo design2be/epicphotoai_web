@@ -61,7 +61,7 @@ a {
 }
 
 .siteHeader__logo {
-  height: 80px;
+  height: 40px;
   width: auto;
   display: block;
 }
@@ -109,36 +109,36 @@ a {
   overflow: hidden;
 }
 
-.teaser__track {
+.teaser__cols {
   position: absolute;
   inset: 0;
-  height: 200%;
-  display: flex;
-  flex-direction: column;
-  animation: teaserScrollUp 40s linear infinite;
-  will-change: transform;
-}
-
-.teaser__collage {
-  position: relative;
-  flex: 0 0 50%;
   padding: 18px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  --gap: 10px;
-  /*
-    "16:9 vertical" => portrait tiles with width:height = 9:16 (height = width * 1.7778)
-    We approximate tile width from viewport width and column count.
-  */
-  grid-auto-rows: calc(((100vw - (2 * var(--gap))) / 3) * 1.7778);
-  grid-auto-flow: dense;
-  gap: var(--gap);
+  --teaser-cols: 3;
+  grid-template-columns: repeat(var(--teaser-cols), minmax(0, 1fr));
+  --teaser-tile-gap: 12px;
+  gap: 12px;
+}
+
+.teaser__col {
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.teaser__colStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--teaser-tile-gap);
+  padding: 0 0 var(--teaser-tile-gap) 0;
+  transform: translateY(0);
+  will-change: transform;
 }
 
 .teaser__tile {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
+  aspect-ratio: 9 / 16;
   object-fit: cover;
   border-radius: 8px;
   filter: saturate(0.95) contrast(1.05);
@@ -178,47 +178,23 @@ a {
 
 /* Responsive tweaks */
 @media (max-width: 720px) {
-  .teaser__collage {
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: calc(((100vw - (1 * var(--gap))) / 2) * 1.7778);
+  .teaser__cols {
+    /* JS sets --teaser-cols; keep layout comfortable */
+    padding: 16px;
+    gap: 10px;
+    --teaser-tile-gap: 10px;
   }
 }
 
 @media (max-width: 420px) {
-  .teaser__collage {
-    --gap: 8px;
+  .teaser__cols {
+    padding: 14px;
+    gap: 10px;
+    --teaser-tile-gap: 10px;
   }
 
   .teaser__content {
     padding-top: 46px;
-  }
-}
-
-/* Desktop mosaic emphasis (subtle, like the reference collage) */
-@media (min-width: 900px) {
-  .teaser__collage {
-    --gap: 12px;
-  }
-
-  .teaser__tile:nth-child(2) {
-    grid-row: span 2;
-  }
-
-  .teaser__tile:nth-child(6) {
-    grid-row: span 2;
-  }
-
-  .teaser__tile:nth-child(7) {
-    grid-column: span 2;
-  }
-}
-
-@keyframes teaserScrollUp {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
   }
 }
 
@@ -318,10 +294,12 @@ a {
 .siteFooter__inner {
   max-width: 1200px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
 }
 
 .siteFooter__brand {
@@ -331,14 +309,15 @@ a {
   color: rgba(255, 255, 255, 0.78);
   font-size: 13px;
   letter-spacing: 0.01em;
-  justify-self: start;
+  justify-content: center;
 }
 
 .siteFooter__links {
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  justify-self: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .siteFooter__link {
@@ -360,12 +339,7 @@ a {
 
 @media (max-width: 560px) {
   .siteFooter__inner {
-    grid-template-columns: 1fr;
-    justify-items: start;
-  }
-
-  .siteFooter__links {
-    justify-self: start;
+    gap: 12px;
   }
 }
 
