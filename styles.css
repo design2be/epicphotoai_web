@@ -1015,6 +1015,256 @@ a {
   color: #3b82f6;
 }
 
+/* Instagram-style phone mock (Social Media section) */
+.phoneMock--ig .phoneMock__screen {
+  background: #ffffff;
+  color: rgba(17, 24, 39, 0.92);
+}
+
+.phoneMock--ig .phoneMock__notch {
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.igMock__topbar {
+  height: 96px;
+  padding: 36px 14px 10px;
+  display: grid;
+  grid-template-columns: 36px 1fr 72px;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  position: relative;
+  z-index: 2;
+}
+
+.igMock__icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: rgba(17, 24, 39, 0.9);
+}
+
+.igMock__logo {
+  justify-self: center;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: rgba(17, 24, 39, 0.92);
+  font-family: "Segoe Script", "Brush Script MT", cursive;
+  user-select: none;
+}
+
+.igMock__actions {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(17, 24, 39, 0.9);
+}
+
+.igMock__action {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+}
+
+.igMock__content {
+  position: absolute;
+  inset: 96px 0 70px 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: #fff;
+}
+
+.igMock__content::-webkit-scrollbar {
+  display: none;
+}
+
+.igMock__stories {
+  padding: 12px 12px 10px;
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.igMock__story {
+  width: 56px;
+  flex: 0 0 auto;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+}
+
+.igMock__avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 15px;
+  color: rgba(17, 24, 39, 0.92);
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    conic-gradient(from 180deg, #f58529, #dd2a7b, #8134af, #515bd4, #f58529) border-box;
+  border: 2px solid transparent;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
+.igMock__storyName {
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(17, 24, 39, 0.72);
+  max-width: 56px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.igMock__post {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.igMock__postHeader {
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 34px 1fr 30px;
+  align-items: center;
+  gap: 10px;
+}
+
+.igMock__postAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 850;
+  font-size: 12px;
+  color: rgba(17, 24, 39, 0.9);
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.igMock__postAvatar--alt {
+  background: rgba(59, 130, 246, 0.14);
+}
+
+.igMock__postMeta {
+  display: grid;
+  gap: 2px;
+}
+
+.igMock__postUser {
+  font-weight: 800;
+  font-size: 12px;
+  color: rgba(17, 24, 39, 0.92);
+}
+
+.igMock__postSub {
+  font-size: 11px;
+  color: rgba(17, 24, 39, 0.62);
+}
+
+.igMock__dots {
+  justify-self: end;
+  letter-spacing: 0.1em;
+  color: rgba(17, 24, 39, 0.55);
+  font-weight: 800;
+}
+
+.igMock__postImg {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.igMock__postActions {
+  padding: 10px 12px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(17, 24, 39, 0.9);
+}
+
+.igMock__postAction {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+}
+
+.igMock__postAction--right {
+  margin-left: auto;
+}
+
+.igMock__postText {
+  padding: 0 12px 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.igMock__likes {
+  font-size: 12px;
+  color: rgba(17, 24, 39, 0.92);
+}
+
+.igMock__caption {
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(17, 24, 39, 0.86);
+}
+
+.igMock__caption strong {
+  font-weight: 850;
+}
+
+.igMock__time {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(17, 24, 39, 0.45);
+}
+
+.igMock__bottomNav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70px;
+  padding: 0 14px 10px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.98);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  z-index: 3;
+}
+
+.igMock__navIcon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: rgba(17, 24, 39, 0.92);
+}
+
+.igMock__navIcon--avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  font-weight: 850;
+  font-size: 12px;
+}
+
 @media (max-width: 420px) {
   .phoneMock {
     --pm-radius: 52px;
