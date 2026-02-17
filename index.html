@@ -280,7 +280,7 @@
           const categoryOrder = ["studio", "travel", "nature", "city", "home", "office", "cafe", "gym", "other"];
 
           const categoriesSet = new Set(uniquePresets.map(getCategoryKey));
-          const categories = ["all"]
+          const categories = ["popular"]
             .concat(
               Array.from(categoriesSet)
                 .filter((c) => c && c !== "all")
@@ -362,13 +362,13 @@
             return card;
           };
 
-          let activeCategory = "all";
+          const popularPresets = uniquePresets.slice(0, 9);
+          let activeCategory = "popular";
 
           const renderGrid = () => {
-            const list =
-              activeCategory === "all"
-                ? uniquePresets
-                : uniquePresets.filter((p) => getCategoryKey(p) === activeCategory);
+            const list = activeCategory === "popular"
+              ? popularPresets
+              : uniquePresets.filter((p) => getCategoryKey(p) === activeCategory);
 
             grid.innerHTML = "";
             for (const p of list) grid.appendChild(createCard(p));
@@ -391,7 +391,7 @@
               btn.className = "styles__filterBtn";
               btn.setAttribute("data-category", key);
               btn.setAttribute("aria-pressed", key === activeCategory ? "true" : "false");
-              btn.textContent = key === "all" ? "All" : humanize(key);
+              btn.textContent = key === "popular" ? "Most popular" : humanize(key);
               btn.addEventListener("click", () => {
                 activeCategory = key;
                 setActiveButton(activeCategory);
