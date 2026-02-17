@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Data Policy • EpicPhotoAI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="siteHeader">
+      <nav class="siteHeader__inner" aria-label="Primary">
+        <a class="siteHeader__logoLink" href="./index.html" aria-label="Home">
+          <img
+            class="siteHeader__logo"
+            src="./assets/logo_v2_200.png"
+            alt="EpicPhotoAI logo"
+            onerror="this.onerror=null;this.src='./assets/logo.svg';"
+          />
+        </a>
+        <div class="siteHeader__nav">
+          <a class="btnPrimary" href="./index.html">Back to home</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="legalPage">
+      <div class="legalPage__inner">
+        <h1 class="legalPage__title">Data Policy</h1>
+        <p class="legalPage__lead">
+          This page is a starter template. Replace the placeholders to match your product,
+          hosting, analytics, and legal requirements.
+        </p>
+
+        <section class="legalPage__section" aria-label="Overview">
+          <h2 class="legalPage__heading">Overview</h2>
+          <p class="legalPage__text">
+            We process personal data to provide and improve EpicPhotoAI. This includes data you
+            provide (e.g., uploads) and technical data required to operate the website.
+          </p>
+        </section>
+
+        <section class="legalPage__section" aria-label="Data we collect">
+          <h2 class="legalPage__heading">Data we collect</h2>
+          <ul class="legalPage__list">
+            <li>Account and contact data (if you create an account): [details]</li>
+            <li>Uploads and generated outputs: [details, retention period]</li>
+            <li>Payment information (handled by a payment provider): [provider]</li>
+            <li>Technical logs (IP address, device/browser data): [details, retention]</li>
+          </ul>
+        </section>
+
+        <section class="legalPage__section" aria-label="Cookies and analytics">
+          <h2 class="legalPage__heading">Cookies and analytics</h2>
+          <p class="legalPage__text">
+            We use cookies and similar technologies for essential functionality and (optionally)
+            analytics. If you use analytics tools, list them here and explain how users can opt out.
+          </p>
+        </section>
+
+        <section class="legalPage__section" aria-label="Sharing and processors">
+          <h2 class="legalPage__heading">Sharing and processors</h2>
+          <p class="legalPage__text">
+            We may share data with service providers (processors) that help us run our services
+            (e.g., hosting, storage, payments). We only share what is necessary and require
+            appropriate safeguards.
+          </p>
+        </section>
+
+        <section class="legalPage__section" aria-label="Your rights">
+          <h2 class="legalPage__heading">Your rights</h2>
+          <p class="legalPage__text">
+            Depending on your jurisdiction, you may have rights to access, correct, delete, or
+            export your data, and to object to certain processing. Contact us to exercise your rights:
+            <a href="mailto:[privacy-email]">[privacy-email]</a>.
+          </p>
+        </section>
+
+        <section class="legalPage__section" aria-label="Contact">
+          <h2 class="legalPage__heading">Contact</h2>
+          <p class="legalPage__text">
+            EpicPhotoAI privacy contact: <a href="mailto:[privacy-email]">[privacy-email]</a><br />
+            Address: [Company / Address]
+          </p>
+        </section>
+
+        <p class="legalPage__meta">
+          Last updated: <span id="js-updated"></span>
+        </p>
+      </div>
+    </main>
+
+    <footer class="siteFooter" aria-label="Footer">
+      <div class="siteFooter__inner">
+        <div class="siteFooter__brand">
+          <span class="siteFooter__copyright">©</span>
+          <span id="js-year" class="siteFooter__year" aria-label="Current year"></span>
+          <span class="siteFooter__name">EpicPhotoAI</span>
+        </div>
+        <nav class="siteFooter__links" aria-label="Legal">
+          <a class="siteFooter__link" href="./imprint.html">Imprint</a>
+          <a class="siteFooter__link" href="./data-policy.html" aria-current="page">Data Policy</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      (() => {
+        const yearEl = document.getElementById("js-year");
+        if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+        const updatedEl = document.getElementById("js-updated");
+        if (updatedEl) updatedEl.textContent = new Date().toISOString().slice(0, 10);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EpicPhotoAI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="siteHeader">
+      <nav class="siteHeader__inner" aria-label="Primary">
+        <a class="siteHeader__logoLink" href="/" aria-label="Home">
+          <img
+            class="siteHeader__logo"
+            src="./assets/logo_v2_200.png"
+            alt="EpicPhotoAI logo"
+            onerror="this.onerror=null;this.src='./assets/logo.svg';"
+          />
+        </a>
+        <div class="siteHeader__nav">
+          <a class="btnPrimary" href="#get-started">Get started</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="teaser" aria-label="Teaser">
+        <div class="teaser__media" aria-hidden="true">
+          <div class="teaser__track">
+            <div class="teaser__collage">
+              <img
+                class="teaser__tile"
+                data-teaser-slot="0"
+                src="./assets/teaser/01.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="1"
+                src="./assets/teaser/02.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="2"
+                src="./assets/teaser/03.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="3"
+                src="./assets/teaser/02.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="4"
+                src="./assets/teaser/01.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="5"
+                src="./assets/teaser/03.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="6"
+                src="./assets/teaser/03.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="7"
+                src="./assets/teaser/01.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="8"
+                src="./assets/teaser/02.svg"
+                alt=""
+              />
+            </div>
+            <div class="teaser__collage" aria-hidden="true">
+              <img
+                class="teaser__tile"
+                data-teaser-slot="0"
+                src="./assets/teaser/01.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="1"
+                src="./assets/teaser/02.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="2"
+                src="./assets/teaser/03.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="3"
+                src="./assets/teaser/02.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="4"
+                src="./assets/teaser/01.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="5"
+                src="./assets/teaser/03.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="6"
+                src="./assets/teaser/03.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="7"
+                src="./assets/teaser/01.svg"
+                alt=""
+              />
+              <img
+                class="teaser__tile"
+                data-teaser-slot="8"
+                src="./assets/teaser/02.svg"
+                alt=""
+              />
+            </div>
+          </div>
+          <div class="teaser__overlay"></div>
+        </div>
+
+        <div class="teaser__content">
+          <h1 class="teaser__headline">Create Epic<br />Photos of You</h1>
+        </div>
+      </section>
+
+      <section class="usecase" aria-label="Social media pictures use case">
+        <div class="usecase__inner">
+          <header class="usecase__header">
+            <h2 class="usecase__headline">Create scroll-stopping social media pictures</h2>
+            <p class="usecase__subhead">
+              Upload one image, then generate a polished, platform-ready version for your profile,
+              posts, and ads.
+            </p>
+          </header>
+
+          <div class="usecase__grid" role="list" aria-label="Original and outcome images">
+            <figure class="usecase__card" role="listitem">
+              <figcaption class="usecase__label">Original</figcaption>
+              <img
+                class="usecase__image"
+                src="./assets/teaser/01.svg"
+                alt="Original uploaded photo example"
+                loading="lazy"
+              />
+            </figure>
+
+            <figure class="usecase__card" role="listitem">
+              <figcaption class="usecase__label">Outcome</figcaption>
+              <img
+                class="usecase__image"
+                data-random-preset="true"
+                src="./assets/teaser/02.svg"
+                alt="AI-generated social media picture outcome example"
+                loading="lazy"
+              />
+            </figure>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="siteFooter" aria-label="Footer">
+      <div class="siteFooter__inner">
+        <div class="siteFooter__brand">
+          <span class="siteFooter__copyright">©</span>
+          <span id="js-year" class="siteFooter__year" aria-label="Current year"></span>
+          <span class="siteFooter__name">EpicPhotoAI</span>
+        </div>
+        <nav class="siteFooter__links" aria-label="Legal">
+          <a class="siteFooter__link" href="./imprint.html">Imprint</a>
+          <a class="siteFooter__link" href="./data-policy.html">Data Policy</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      (() => {
+        const yearEl = document.getElementById("js-year");
+        if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+        // --- Teaser collage images (preset manifest) ---
+        // Prefers: ./assets/presets/manifest.json
+        // Fallback: ./assets/teaser/manifest.json (placeholders)
+        const loadImageManifest = async (url) => {
+          try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) return [];
+            const data = await res.json();
+            const images = Array.isArray(data?.images) ? data.images.filter(Boolean) : [];
+            return images.filter((p) => typeof p === "string" && p.trim()).map((p) => p.trim());
+          } catch {
+            return [];
+          }
+        };
+
+        const canLoadImage = (url, timeoutMs = 6000) =>
+          new Promise((resolve) => {
+            const img = new Image();
+            let done = false;
+            const finish = (ok) => {
+              if (done) return;
+              done = true;
+              clearTimeout(timer);
+              // Prevent late handlers from firing after resolve.
+              img.onload = null;
+              img.onerror = null;
+              resolve(ok);
+            };
+            const timer = setTimeout(() => finish(false), timeoutMs);
+            img.onload = () => finish(true);
+            img.onerror = () => finish(false);
+            img.src = url;
+          });
+
+        const shuffleInPlace = (arr) => {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+          }
+          return arr;
+        };
+
+        const filterLoadableImages = async (images, maxChecks = 20) => {
+          const pool = shuffleInPlace(images.slice());
+          const checked = pool.slice(0, Math.max(1, Math.min(pool.length, maxChecks)));
+          const results = await Promise.all(checked.map((p) => canLoadImage(p)));
+          return checked.filter((p, i) => results[i]);
+        };
+
+        const applyTeaserManifest = async () => {
+          const tiles = Array.from(
+            document.querySelectorAll(".teaser__collage img.teaser__tile")
+          );
+          if (!tiles.length) return;
+
+          try {
+            const presetCandidates = await loadImageManifest("./assets/presets/manifest.json");
+            let images = presetCandidates.length
+              ? await filterLoadableImages(presetCandidates, 28)
+              : [];
+
+            if (!images.length) {
+              const fallback = await loadImageManifest("./assets/teaser/manifest.json");
+              images = fallback.length ? await filterLoadableImages(fallback, 10) : [];
+            }
+
+            if (!images.length) return;
+
+            // Ensure the loop seam is invisible by applying the same image
+            // to the same "slot" in both duplicated collages.
+            const slots = new Map();
+            for (const img of tiles) {
+              const slot = img.getAttribute("data-teaser-slot") ?? "";
+              if (!slots.has(slot)) slots.set(slot, []);
+              slots.get(slot).push(img);
+            }
+
+            const slotKeys = Array.from(slots.keys()).sort((a, b) => Number(a) - Number(b));
+            const pool = shuffleInPlace(images.slice());
+            slotKeys.forEach((slot, i) => {
+              const next = pool[i % pool.length];
+              if (typeof next !== "string" || !next) return;
+              for (const img of slots.get(slot)) {
+                img.onerror = () => {
+                  img.onerror = null;
+                  img.src = "./assets/teaser/02.svg";
+                };
+                img.src = next;
+              }
+            });
+
+            // Also randomize any explicit "outcome" images that opt in.
+            const randomTargets = Array.from(document.querySelectorAll("img[data-random-preset='true']"));
+            for (const img of randomTargets) {
+              const next = pool[Math.floor(Math.random() * pool.length)];
+              if (!next) continue;
+              img.onerror = () => {
+                img.onerror = null;
+                img.src = "./assets/teaser/02.svg";
+              };
+              img.src = next;
+            }
+          } catch {
+            // Ignore manifest errors; placeholders remain.
+          }
+        };
+
+        applyTeaserManifest();
+      })();
+    </script>
+  </body>
+</html>
