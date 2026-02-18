@@ -780,6 +780,24 @@ a {
   pointer-events: none;
 }
 
+/* Variant: place "before" on the right (used in Social Media section) */
+.usecaseVisual--beforeRight {
+  padding-left: 0;
+  padding-right: clamp(22px, 7vw, 92px);
+}
+
+.usecaseVisual--beforeRight .usecaseVisual__before {
+  left: auto;
+  right: 0;
+  transform: translateX(18px) rotate(4deg);
+}
+
+.usecaseVisual--beforeRight .usecaseVisual__arrow {
+  left: auto;
+  right: clamp(72px, 16vw, 122px);
+  transform: rotate(8deg) scaleX(-1);
+}
+
 /* Personal branding preview gallery */
 .brandGallery {
   width: min(100%, 360px);
@@ -1494,6 +1512,15 @@ a {
 
   .usecaseVisual__before {
     transform: translateX(-14px) rotate(-3deg);
+  }
+
+  .usecaseVisual--beforeRight {
+    padding-left: 0;
+    padding-right: clamp(18px, 9vw, 86px);
+  }
+
+  .usecaseVisual--beforeRight .usecaseVisual__before {
+    transform: translateX(14px) rotate(3deg);
   }
 }
 
