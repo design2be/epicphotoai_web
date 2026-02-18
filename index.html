@@ -339,7 +339,7 @@
                     </span>
                   </div>
 
-                  <div class="igMock__content" aria-hidden="true">
+                  <div class="igMock__content" data-ig-feed aria-hidden="true">
                     <div class="igMock__stories" aria-label="Stories">
                       <div class="igMock__story"><span class="igMock__avatar">E</span><span class="igMock__storyName">epic</span></div>
                       <div class="igMock__story"><span class="igMock__avatar">B</span><span class="igMock__storyName">ben</span></div>
@@ -600,6 +600,25 @@
         </div>
       </section>
     </main>
+
+    <section id="get-started" class="getStarted" aria-labelledby="get-started-title">
+      <div class="getStarted__inner">
+        <div class="getStarted__card">
+          <div class="getStarted__content">
+            <p class="getStarted__eyebrow">Get started</p>
+            <h2 id="get-started-title" class="getStarted__title">Ready to make your photos epic?</h2>
+            <p class="getStarted__lead">
+              Pick a style, upload your photos, and generate a set you’ll actually want to use.
+            </p>
+
+          </div>
+
+          <div class="getStarted__actions" aria-label="Get started actions">
+            <a class="btnPrimary" href="#pick-your-look">Get Started</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <footer class="siteFooter" aria-label="Footer">
       <div class="siteFooter__inner">
@@ -1340,10 +1359,193 @@
           }
         };
 
+        const applyIgAutoScroll = async () => {
+          const feed = document.querySelector("[data-ig-feed]");
+          if (!feed) return;
+
+          const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+          if (prefersReducedMotion) return;
+
+          const templatePost = feed.querySelector(".igMock__post");
+          if (!templatePost) return;
+
+          const setSrcSafe = (img, src) => {
+            if (!img || !src) return;
+            img.onerror = () => {
+              img.onerror = null;
+              img.src = "./assets/teaser/02.svg";
+            };
+            img.src = src;
+          };
+
+          const pickRandom = (pool, avoid = []) => {
+            const list = (Array.isArray(pool) ? pool : []).filter(Boolean);
+            if (!list.length) return "";
+            const avoidSet = new Set((Array.isArray(avoid) ? avoid : []).filter(Boolean));
+            const filtered = list.filter((p) => !avoidSet.has(p));
+            const pickFrom = filtered.length ? filtered : list;
+            return pickFrom[Math.floor(Math.random() * pickFrom.length)] || "";
+          };
+
+          // Build an image pool.
+          let candidates = await loadImageManifest("./assets/presets/manifest.json");
+          let images = candidates.length ? await filterLoadableImages(candidates, 28) : [];
+          if (!images.length) {
+            candidates = await loadImageManifest("./assets/teaser/manifest.json");
+            images = candidates.length ? await filterLoadableImages(candidates, 12) : [];
+          }
+          // Last-resort: keep whatever is already in the DOM.
+          if (!images.length) {
+            images = Array.from(feed.querySelectorAll("img.igMock__postImg"))
+              .map((img) => img.currentSrc || img.src)
+              .filter(Boolean);
+          }
+          if (!images.length) images = ["./assets/teaser/01.svg", "./assets/teaser/02.svg", "./assets/teaser/03.svg"];
+
+          const users = [
+            { u: "epicphotoai", a: "E", sub: "Featured preset", cap: "Same upload, new vibe. #preset #portrait" },
+            { u: "benjamin", a: "B", sub: "New post", cap: "Fresh set for my next carousel. #creator" },
+            { u: "mila", a: "M", sub: "Weekend drop", cap: "New look, same me. #explore" },
+            { u: "jules", a: "J", sub: "Photo dump", cap: "Posting again because why not. #grid" },
+            { u: "kai", a: "K", sub: "Today", cap: "Lighting was too good not to post. #vibes" },
+            { u: "sara", a: "S", sub: "Just now", cap: "Trying a new preset. Thoughts? #creator" },
+          ];
+
+          const formatLikes = () => {
+            const base = 1200 + Math.floor(Math.random() * 9200);
+            return base.toLocaleString();
+          };
+
+          const formatTime = () => {
+            const options = ["JUST NOW", "5 MIN AGO", "1 HOUR AGO", "2 HOURS AGO", "YESTERDAY"];
+            return options[Math.floor(Math.random() * options.length)] || "JUST NOW";
+          };
+
+          const recent = [];
+
+          const hydrateExisting = () => {
+            const imgs = Array.from(feed.querySelectorAll("img.igMock__postImg"));
+            for (const img of imgs) {
+              const next = pickRandom(images, recent.slice(-3));
+              if (next) setSrcSafe(img, next);
+              recent.push(next);
+              if (recent.length > 12) recent.splice(0, recent.length - 12);
+            }
+          };
+
+          const createPost = () => {
+            const node = templatePost.cloneNode(true);
+
+            const who = users[Math.floor(Math.random() * users.length)] || users[0];
+            const avatar = node.querySelector(".igMock__postAvatar");
+            const userEl = node.querySelector(".igMock__postUser");
+            const subEl = node.querySelector(".igMock__postSub");
+            const likesEl = node.querySelector(".igMock__likes strong");
+            const capStrong = node.querySelector(".igMock__caption strong");
+            const capText = node.querySelector(".igMock__caption");
+            const timeEl = node.querySelector(".igMock__time");
+            const img = node.querySelector("img.igMock__postImg");
+
+            if (avatar) avatar.textContent = who.a;
+            if (userEl) userEl.textContent = who.u;
+            if (subEl) subEl.textContent = who.sub;
+            if (likesEl) likesEl.textContent = `${formatLikes()} likes`;
+            if (capStrong) capStrong.textContent = who.u;
+            if (capText && capStrong) {
+              // Keep <strong>username</strong> and replace the tail text.
+              const tail = document.createTextNode(` ${who.cap}`);
+              // Remove everything after the strong node.
+              while (capStrong.nextSibling) capStrong.parentNode.removeChild(capStrong.nextSibling);
+              capStrong.parentNode.appendChild(tail);
+            }
+            if (timeEl) timeEl.textContent = formatTime();
+
+            const next = pickRandom(images, recent.slice(-3));
+            if (img && next) setSrcSafe(img, next);
+            recent.push(next);
+            if (recent.length > 12) recent.splice(0, recent.length - 12);
+
+            return node;
+          };
+
+          const ensureMinPosts = (minCount = 6) => {
+            const posts = feed.querySelectorAll(".igMock__post");
+            const missing = Math.max(0, minCount - posts.length);
+            for (let i = 0; i < missing; i++) feed.appendChild(createPost());
+          };
+
+          const pruneOldPosts = (maxCount = 10) => {
+            const posts = Array.from(feed.querySelectorAll(".igMock__post"));
+            while (posts.length > maxCount) {
+              const first = posts.shift();
+              if (!first) break;
+              const h = first.offsetHeight || first.getBoundingClientRect().height || 0;
+              first.remove();
+              // Keep scroll position visually stable after removing from top.
+              feed.scrollTop = Math.max(0, feed.scrollTop - h);
+            }
+          };
+
+          const stepScroll = () => {
+            // Append next random picture and scroll down to it.
+            const nextPost = createPost();
+            feed.appendChild(nextPost);
+
+            // Scroll so the new post becomes visible (smooth).
+            const top = nextPost.offsetTop;
+            feed.scrollTo({ top, behavior: "smooth" });
+
+            pruneOldPosts(10);
+          };
+
+          hydrateExisting();
+          ensureMinPosts(6);
+
+          // Only animate while the mock is in view.
+          const root = feed.closest(".phoneMock--ig") || feed;
+          let intervalId = 0;
+
+          const stop = () => {
+            if (intervalId) window.clearInterval(intervalId);
+            intervalId = 0;
+          };
+
+          const start = () => {
+            stop();
+            intervalId = window.setInterval(stepScroll, 3000);
+          };
+
+          const hasIO = typeof IntersectionObserver !== "undefined";
+          const io = hasIO
+            ? new IntersectionObserver(
+                (entries) => {
+                  const on = entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.25);
+                  if (on) start();
+                  else stop();
+                },
+                { threshold: [0, 0.25, 0.5, 1] }
+              )
+            : null;
+
+          if (io) io.observe(root);
+          else start();
+
+          // Best-effort cleanup if removed.
+          const mo = new MutationObserver(() => {
+            if (!document.body.contains(root)) {
+              stop();
+              io?.disconnect();
+              mo.disconnect();
+            }
+          });
+          mo.observe(document.body, { childList: true, subtree: true });
+        };
+
         applyTeaserManifest();
         applyStylePresets();
         applyDatingSlider();
         applyBrandGallery();
+        applyIgAutoScroll();
       })();
     </script>
   </body>
