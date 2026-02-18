@@ -183,9 +183,12 @@ a {
 
 /* Hero overlap card */
 .teaserDemo {
-  --teaserDemo-side-w: 330px;
-  --teaserDemo-arrow-w: 156px; /* 120px * 1.3 */
-  --teaserDemo-steps-mid-w: 190px;
+  /* Match the same max width as `.styles__inner` */
+  width: min(100%, 1200px);
+
+  /* Scale internal layout up to fit the wider container */
+  --teaserDemo-arrow-w: clamp(156px, 15vw, 220px);
+  --teaserDemo-steps-mid-w: clamp(190px, 22vw, 280px);
 
   margin: 0 auto;
   padding: 18px 18px 20px;
@@ -201,7 +204,7 @@ a {
   isolation: isolate;
 
   display: grid;
-  grid-template-columns: minmax(0, var(--teaserDemo-side-w)) var(--teaserDemo-arrow-w) minmax(0, var(--teaserDemo-side-w));
+  grid-template-columns: minmax(0, 1fr) var(--teaserDemo-arrow-w) minmax(0, 1fr);
   grid-template-areas:
     "steps steps steps"
     "before arrow after";
@@ -215,7 +218,7 @@ a {
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(0, var(--teaserDemo-side-w)) minmax(0, var(--teaserDemo-steps-mid-w)) minmax(0, var(--teaserDemo-side-w));
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--teaserDemo-steps-mid-w)) minmax(0, 1fr);
   align-items: center;
   column-gap: 14px;
   row-gap: 12px;
@@ -231,11 +234,11 @@ a {
   align-items: center;
   gap: 12px;
   font-weight: 650;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.15;
   letter-spacing: 0.01em;
   color: rgba(15, 23, 42, 0.92);
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -244,7 +247,7 @@ a {
 
 .teaserDemo__steps > .teaserDemo__step:nth-child(1) {
   justify-self: start;
-  margin-left: 16px; /* match image inset padding */
+  margin-left: 18px; /* match image inset padding */
 }
 
 .teaserDemo__steps > .teaserDemo__step:nth-child(2) {
@@ -254,19 +257,19 @@ a {
 
 .teaserDemo__steps > .teaserDemo__step:nth-child(3) {
   justify-self: end;
-  margin-right: 16px; /* match image inset padding */
+  margin-right: 18px; /* match image inset padding */
 }
 
 .teaserDemo__stepNum {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--primary);
   color: #fff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 750;
   box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
 }
@@ -276,7 +279,7 @@ a {
   z-index: 1;
   margin: 0;
   width: 100%;
-  max-width: var(--teaserDemo-side-w);
+  max-width: none;
   justify-self: stretch;
 }
 
@@ -289,7 +292,7 @@ a {
 }
 
 .teaserDemo__figure--before .teaserDemo__img {
-  width: 80%;
+  width: 92%;
   margin: 0 auto;
 }
 
@@ -311,7 +314,7 @@ a {
 
 .teaserDemo__caption {
   margin: 10px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 650;
   letter-spacing: 0.02em;
   color: rgba(15, 23, 42, 0.72);
@@ -351,8 +354,8 @@ a {
 
 .teaserDemo__img--thumb {
   position: absolute;
-  width: 56%;
-  height: 56%;
+  width: 60%;
+  height: 60%;
   z-index: 1;
   border-radius: 16px;
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.16);
