@@ -736,6 +736,50 @@ a {
   padding: 4px 0;
 }
 
+/* Usecase before/after overlay (small) */
+.usecaseVisual {
+  position: relative;
+  width: min(100%, 420px);
+  margin: 0 auto;
+  /* Create room for the "before" thumb while still allowing overlap */
+  padding-left: clamp(22px, 7vw, 92px);
+}
+
+.usecaseVisual__main {
+  position: relative;
+  z-index: 1;
+}
+
+.usecaseVisual__before {
+  position: absolute;
+  left: 0;
+  top: clamp(30px, 7vw, 86px);
+  width: clamp(88px, 18vw, 140px);
+  aspect-ratio: 4 / 5;
+  height: auto;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+  transform: translateX(-18px) rotate(-4deg);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.usecaseVisual__arrow {
+  position: absolute;
+  left: clamp(72px, 16vw, 122px);
+  top: clamp(58px, 11vw, 112px);
+  width: clamp(40px, 8vw, 64px);
+  height: auto;
+  opacity: 0.95;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.55));
+  transform: rotate(-8deg);
+  z-index: 2;
+  pointer-events: none;
+}
+
 /* Personal branding preview gallery */
 .brandGallery {
   width: min(100%, 360px);
@@ -1441,6 +1485,15 @@ a {
 
   .usecase__grid {
     grid-template-columns: 1fr;
+  }
+
+  .usecaseVisual {
+    width: min(100%, 380px);
+    padding-left: clamp(18px, 9vw, 86px);
+  }
+
+  .usecaseVisual__before {
+    transform: translateX(-14px) rotate(-3deg);
   }
 }
 
