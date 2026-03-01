@@ -114,6 +114,7 @@ a {
   position: absolute;
   inset: 0;
   padding: 18px;
+  padding-top: 0;
   display: grid;
   --teaser-cols: 3;
   grid-template-columns: repeat(var(--teaser-cols), minmax(0, 1fr));
