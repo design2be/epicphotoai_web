@@ -6,6 +6,7 @@
       "id": "preset_greenhouse_casual_smile",
       "title": "Greenhouse casual smile",
       "description": "Bright casual portrait in a plant-filled indoor space with a friendly, natural vibe.",
+      "gender":"male",
       "options": {
         "customPrompt": "Casual lifestyle portrait standing in a bright indoor space filled with large green plants and soft daylight. Natural friendly smile while holding a phone, clean modern environment with an airy feel. Emphasis on a relaxed, approachable mood with fresh tones and subtle depth.",
         "resemblance": 85,
@@ -31,6 +32,7 @@
       "id": "preset_desert_confident_portrait",
       "title": "Desert confident portrait",
       "description": "Strong, masculine portrait with warm desert tones and confident posture.",
+      "gender":"male",
       "options": {
         "customPrompt": "A confident portrait set in a warm desert landscape with soft golden-hour light creating gentle highlights and shadows across the face and arms. The subject stands with a composed, self-assured posture, wearing a fitted dark t-shirt and sunglasses for a clean, modern look. Background should be softly blurred sand tones to keep focus on the subject while maintaining a cinematic depth. Overall mood is powerful yet natural, with realistic skin texture and minimal retouching.",
         "resemblance": 85,
@@ -56,6 +58,7 @@
       "id": "preset_private_jet_candid",
       "title": "Private jet candid",
       "description": "Relaxed candid portrait inside a private jet with a premium lifestyle feel.",
+      "gender":"male",
       "options": {
         "customPrompt": "Candid lifestyle shot seated inside a private jet cabin with soft natural window light. Relaxed posture, premium travel atmosphere, neutral tones and a clean editorial feel. Focus on an authentic moment rather than a posed portrait.",
         "resemblance": 85,
@@ -81,6 +84,7 @@
       "id": "preset_gym_mirror_selfie",
       "title": "Gym mirror selfie",
       "description": "Fitness mirror selfie in a gym environment with a casual candid feel.",
+      "gender":"male",
       "options": {
         "customPrompt": "Mirror selfie taken in a gym with bright indoor lighting and visible workout equipment in the background. Seated relaxed pose on the floor, sporty outfit with vibrant accents, candid social-media style composition. Emphasis on an authentic workout moment rather than a posed studio look.",
         "resemblance": 85,
@@ -105,6 +109,7 @@
     {
       "id": "preset_driving_candid_profile",
       "title": "Car candid profile",
+      "gender":"female",
       "description": "Natural candid profile shot inside a car with soft daylight and lifestyle feel.",
       "options": {
         "customPrompt": "Candid profile portrait inside a car with soft natural daylight coming through the windows. The subject is seated (car parked or passenger seat), relaxed and authentic, with a clean lifestyle/editorial aesthetic. Keep the background outside the windows softly out of focus (no action or driving implied).",
@@ -131,6 +136,7 @@
       "id": "preset_cafe_relaxed_moment",
       "title": "Café relaxed moment",
       "description": "Warm, candid café portrait with a relaxed mood and natural window light.",
+      "gender":"male",
       "options": {
         "customPrompt": "Relaxed candid moment sitting in a café holding a cup of coffee, with soft window light creating gentle highlights and cozy atmosphere. Natural smile and thoughtful gaze to the side, lifestyle editorial feel with shallow depth of field. Warm, inviting tones emphasizing comfort and authenticity.",
         "resemblance": 85,
@@ -156,6 +162,7 @@
     {
       "id": "preset_night_street_moody",
       "title": "Night street moody",
+      "gender":"male",
       "description": "Moody nighttime street portrait under warm streetlight with cinematic atmosphere.",
       "options": {
         "customPrompt": "Cinematic nighttime portrait standing under a warm streetlamp on a quiet riverside walkway. Dark clothing with soft highlights from the lamp, reflective pavement adding depth and mood. Relaxed candid pose with a contemplative expression, emphasizing atmosphere and contrast.",
@@ -183,6 +190,7 @@
       "id": "preset_jetski_action",
       "title": "Jetski action shot",
       "description": "High-energy action portrait riding a jetski on open water with bright daylight and vibrant colors.",
+      "gender":"male",
       "options": {
         "customPrompt": "Dynamic action shot riding a jetski on the ocean with splashing water and bright daylight. Vibrant blue sea and distant coastline create an adventurous travel atmosphere. Energetic candid expression capturing movement and excitement with a crisp, high-contrast look.",
         "resemblance": 85,
@@ -211,6 +219,7 @@
       "id": "preset_studio_black_white_portrait",
       "title": "Studio black & white portrait",
       "description": "Classic black and white studio portrait with a relaxed, confident expression.",
+      "gender":"male",
       "options": {
         "customPrompt": "Timeless black and white studio portrait with soft directional lighting and a clean dark backdrop. Relaxed seated pose with a natural smile, creating a refined editorial feel. Subtle contrast and gentle shadows emphasize facial features while keeping a polished yet authentic look.",
         "resemblance": 85,
@@ -236,6 +245,7 @@
       "id": "preset_greenhouse_casual_smile",
       "title": "Greenhouse casual smile",
       "description": "Bright casual portrait in a plant-filled indoor space with a friendly, natural vibe.",
+      "gender":"male",
       "options": {
         "customPrompt": "Casual lifestyle portrait standing in a bright indoor space filled with large green plants and soft daylight. Natural friendly smile while holding a phone, clean modern environment with an airy feel. Emphasis on a relaxed, approachable mood with fresh tones and subtle depth.",
         "resemblance": 85,
@@ -261,6 +271,7 @@
       "id": "preset_sunny_fitness_low_angle",
       "title": "Sunny outdoor fitness low angle",
       "description": "Bright outdoor fitness portrait with strong sunlight, clear blue sky, and a dynamic low-angle perspective.",
+      "gender":"male",
       "options": {
         "customPrompt": "Athletic outdoor lifestyle shot taken from a low angle with intense midday sun overhead. Clear blue sky, modern white house exterior, and visible post-workout sweat for a fresh energetic feel. Confident relaxed expression with a clean, vibrant social-media style composition.",
         "resemblance": 90,
@@ -286,6 +297,7 @@
       "id": "preset_outdoor_cozy_golden",
       "title": "Outdoor cozy golden hour",
       "description": "Warm outdoor portrait wrapped in a blanket with a soft natural landscape background.",
+      "gender":"female",
       "options": {
         "customPrompt": "Cozy outdoor portrait during golden hour with soft warm light and a gentle breeze moving the hair. Wrapped in a colorful blanket, relaxed natural smile looking off-camera, peaceful open landscape in the background. Emphasis on warmth, comfort, and an authentic lifestyle feel.",
         "resemblance": 85,
@@ -311,6 +323,7 @@
       "id": "preset_beach_walk_sunset",
       "title": "Beach walk sunset",
       "description": "Natural full-body portrait walking along the shoreline with warm evening light.",
+      "gender":"female",
       "options": {
         "customPrompt": "Lifestyle full-body shot walking along the beach shoreline with gentle waves and warm low sunlight. Relaxed candid mood with natural movement in clothing and hair, creating an effortless summer feel. Clean composition with soft horizon and subtle depth for a fresh, editorial look.",
         "resemblance": 85,
@@ -336,6 +349,7 @@
       "id": "preset_tropical_water_portrait",
       "title": "Tropical water portrait",
       "description": "Bright tropical beach portrait standing in clear shallow water with a relaxed vacation vibe.",
+      "gender":"male",
       "options": {
         "customPrompt": "Casual vacation portrait standing in shallow turquoise ocean water under bright sunlight. Relaxed confident posture with gentle reflections on the water surface and a clear horizon. Fresh, summery atmosphere with natural colors and an authentic travel feel.",
         "resemblance": 85,
@@ -360,6 +374,7 @@
     {
       "id": "preset_travel_doorway_portrait",
       "title": "Travel doorway portrait",
+      "gender":"male",
       "description": "Charming travel portrait seated in front of a rustic doorway with warm tones.",
       "options": {
         "customPrompt": "Relaxed travel portrait seated in front of a rustic wooden doorway with warm stone textures and potted plants. Soft daylight creates a bright, inviting atmosphere with a casual candid feel. Composition emphasizes symmetry and a cozy European travel mood.",
@@ -410,6 +425,7 @@
     {
       "id": "preset_artistic_sugar_skull",
       "title": "Artistic sugar skull portrait",
+      "gender":"female",
       "description": "Dramatic studio portrait with elaborate artistic face paint and dark background.",
       "options": {
         "customPrompt": "High-fashion studio portrait with intricate sugar skull inspired face paint, dramatic eye makeup, and decorative jewels. Dark seamless background with directional studio lighting creating strong contrast and a cinematic mood. Editorial beauty style with a bold artistic expression and fine details emphasized.",
@@ -435,6 +451,7 @@
     {
       "id": "preset_wedding_joy_portrait",
       "title": "Wedding joy portrait",
+       "gender":"female",
       "description": "Elegant bridal portrait with soft background blur and joyful expression.",
       "options": {
         "customPrompt": "Elegant bridal portrait with soft natural light and a warm, joyful expression. Shallow depth of field creates a creamy blurred background, highlighting the dress details and delicate accessories. Romantic, timeless mood with a clean editorial style.",
@@ -460,6 +477,7 @@
     {
       "id": "preset_christmas_gift_moment",
       "title": "Christmas gift moment",
+       "gender":"female",
       "description": "Festive holiday portrait with warm lights and a playful expression.",
       "options": {
         "customPrompt": "Festive indoor holiday portrait holding a large wrapped gift with warm decorative lights and a cozy seasonal setting. Playful surprised expression with a cheerful atmosphere, soft warm tones, and a lively lifestyle feel. Emphasis on celebration and holiday spirit.",
@@ -485,6 +503,7 @@
     {
       "id": "preset_shopping_candid_smile",
       "title": "Shopping candid smile",
+       "gender":"female",
       "description": "Bright lifestyle portrait carrying shopping bags in a modern indoor mall.",
       "options": {
         "customPrompt": "Candid lifestyle portrait walking through a modern shopping mall with natural light and a lively atmosphere. Looking back with a cheerful smile, hair in motion, and shopping bags adding a dynamic, everyday moment. Clean, contemporary composition with a fresh editorial feel.",
@@ -510,6 +529,7 @@
     {
       "id": "preset_glam_beauty_closeup",
       "title": "Glam beauty close-up",
+       "gender":"female",
       "description": "High-end beauty portrait with dramatic makeup and studio lighting.",
       "options": {
         "customPrompt": "High-fashion beauty close-up with flawless skin, bold red lips, and precise eye makeup. Dark studio background with soft directional lighting creating a luxurious editorial feel. Emphasis on elegance, texture, and refined glamour.",
@@ -535,6 +555,7 @@
     {
       "id": "preset_glam_beauty_closeup",
       "title": "Glam beauty close-up",
+       "gender":"female",
       "description": "High-end beauty portrait with dramatic makeup and studio lighting.",
       "options": {
         "customPrompt": "High-fashion beauty close-up with flawless skin, bold red lips, and precise eye makeup. Dark studio background with soft directional lighting creating a luxurious editorial feel. Emphasis on elegance, texture, and refined glamour.",
@@ -560,6 +581,7 @@
     {
       "id": "preset_moody_outdoor_portrait",
       "title": "Moody outdoor portrait",
+       "gender":"female",
       "description": "Soft, cinematic outdoor portrait with shallow depth of field and a contemplative mood.",
       "options": {
         "customPrompt": "Cinematic outdoor portrait with muted tones and shallow depth of field, seated on a roadside barrier. Soft natural light and a calm, introspective expression create a dreamy editorial atmosphere. Emphasis on subtle contrast, texture, and a relaxed pose.",
@@ -585,6 +607,7 @@
     {
       "id": "preset_conference_speaker_stage",
       "title": "Conference speaker on stage",
+       "gender":"male",
       "description": "Professional event portrait presenting on a stage with dramatic lighting.",
       "options": {
         "customPrompt": "Professional conference setting with a speaker presenting on stage under colorful event lighting. Confident body language and a formal outfit, with a podium and large screen in the background. Clean corporate atmosphere with a documentary event style.",
@@ -611,6 +634,7 @@
       "id": "preset_guitar_stage_moody",
       "title": "Moody guitar performance",
       "description": "Dramatic stage-style portrait playing electric guitar with atmospheric lighting.",
+      "gender":"male",
       "options": {
         "customPrompt": "Cinematic performance portrait playing an electric guitar with moody blue lighting and light smoke creating a concert atmosphere. Focus on movement and intensity with a dark background and strong contrast. Editorial music photography style with a dynamic, expressive mood.",
         "resemblance": 85,
@@ -635,6 +659,7 @@
     {
       "id": "preset_live_concert_singer",
       "title": "Live concert singer",
+      "gender":"female",
       "description": "Cinematic concert portrait with colorful stage lights and a strong performance mood.",
       "options": {
         "customPrompt": "Silhouette-style concert portrait singing into a microphone with vibrant blue and warm stage lights creating a cinematic atmosphere. Soft haze and bokeh lights in the background emphasize a live performance feel. Dynamic, emotional mood with strong contrast and dramatic color tones.",
@@ -660,6 +685,7 @@
     {
       "id": "preset_roses_studio_portrait",
       "title": "Roses studio portrait",
+      "gender":"female",
       "description": "Bright studio portrait holding a large bouquet of red roses with a joyful mood.",
       "options": {
         "customPrompt": "Studio portrait holding an oversized bouquet of vibrant red roses with soft even lighting and a clean neutral background. Cheerful natural expression with a fresh, romantic lifestyle feel. Emphasis on color contrast between the flowers and outfit for a polished editorial look.",
