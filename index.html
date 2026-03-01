@@ -75,28 +75,68 @@
             </div>
 
             <figure class="teaserDemo__figure teaserDemo__figure--after">
-              <div class="teaserDemo__afterStack" aria-hidden="true">
+              <div class="teaserDemo__afterSlider" data-teaser-demo-stack aria-hidden="true">
                 <img
-                  class="teaserDemo__img teaserDemo__img--thumb teaserDemo__img--thumbA"
-                  data-random-preset="true"
+                  class="teaserDemo__img teaserDemo__afterBack teaserDemo__afterBack--a"
+                  data-teaser-demo-back-a
                   src="./assets/teaser/02.svg"
                   alt=""
-                  loading="lazy"
+                  loading="eager"
+                  decoding="async"
                 />
                 <img
-                  class="teaserDemo__img teaserDemo__img--thumb teaserDemo__img--thumbB"
-                  data-random-preset="true"
+                  class="teaserDemo__img teaserDemo__afterBack teaserDemo__afterBack--b"
+                  data-teaser-demo-back-b
                   src="./assets/teaser/03.svg"
                   alt=""
                   loading="lazy"
+                  decoding="async"
                 />
-                <img
-                  class="teaserDemo__img teaserDemo__img--main"
-                  data-random-preset="true"
-                  src="./assets/teaser/02.svg"
-                  alt=""
-                  loading="lazy"
-                />
+
+                <div class="teaserDemo__afterViewport" aria-hidden="true">
+                  <div class="teaserDemo__afterTrack" data-teaser-demo-track>
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/teaser/01.svg"
+                      alt=""
+                      loading="eager"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/teaser/02.svg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/teaser/03.svg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/teaser/01.svg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/teaser/02.svg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                </div>
               </div>
               <figcaption class="teaserDemo__caption">After</figcaption>
             </figure>
@@ -1401,6 +1441,115 @@
           }
         };
 
+        const initTeaserDemoStackRotator = () => {
+          const root = document.querySelector("[data-teaser-demo-stack]");
+          const track = root?.querySelector("[data-teaser-demo-track]");
+          const backA = root?.querySelector("[data-teaser-demo-back-a]");
+          const backB = root?.querySelector("[data-teaser-demo-back-b]");
+          if (!root || !track) return;
+
+          const slides = () => Array.from(track.children).filter((el) => el && el.nodeType === 1);
+          if (slides().length < 2) return;
+
+          const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+          if (prefersReducedMotion) return;
+
+          const SLIDE_EVERY_MS = 2600;
+          const TRANSITION_MS = 460;
+          const EASING = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+
+          let animating = false;
+          let intervalId = 0;
+          let fallbackTimer = 0;
+
+          const getImgSrc = (el) => {
+            if (!el) return "";
+            // Prefer the actually-loaded resource when available.
+            return el.currentSrc || el.src || "";
+          };
+
+          const syncBacks = () => {
+            const s = slides();
+            if (!s.length) return;
+            const next1 = s[1] ? getImgSrc(s[1]) : getImgSrc(s[0]);
+            const next2 = s[2] ? getImgSrc(s[2]) : next1;
+            if (backA && next1) backA.src = next1;
+            if (backB && next2) backB.src = next2;
+          };
+
+          const stop = () => {
+            if (intervalId) window.clearInterval(intervalId);
+            intervalId = 0;
+            if (fallbackTimer) window.clearTimeout(fallbackTimer);
+            fallbackTimer = 0;
+          };
+
+          const rotateOnce = () => {
+            if (animating) return;
+            if (document.hidden) return;
+            if (slides().length < 2) return;
+
+            animating = true;
+            track.style.transition = `transform ${TRANSITION_MS}ms ${EASING}`;
+            track.style.transform = "translateX(-100%)";
+
+            let done = false;
+            const onDone = () => {
+              if (done) return;
+              done = true;
+              if (fallbackTimer) window.clearTimeout(fallbackTimer);
+              fallbackTimer = 0;
+
+              // Move first -> end, then snap back without transition.
+              const first = track.firstElementChild;
+              if (first) track.appendChild(first);
+              track.style.transition = "none";
+              track.style.transform = "translateX(0%)";
+              // Force reflow so the next transition reliably applies.
+              track.getBoundingClientRect();
+              track.style.transition = "";
+              syncBacks();
+              animating = false;
+            };
+
+            track.addEventListener("transitionend", onDone, { once: true });
+            // Fallback in case transitionend doesn't fire (background tab, etc).
+            fallbackTimer = window.setTimeout(onDone, TRANSITION_MS + 160);
+          };
+
+          const start = () => {
+            stop();
+            intervalId = window.setInterval(() => rotateOnce(), SLIDE_EVERY_MS);
+          };
+
+          const hasIO = typeof IntersectionObserver !== "undefined";
+          const io = hasIO
+            ? new IntersectionObserver(
+                (entries) => {
+                  const on = entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.25);
+                  if (on) start();
+                  else stop();
+                },
+                { threshold: [0, 0.25, 0.5, 1] }
+              )
+            : null;
+
+          if (io) io.observe(root);
+          else start();
+
+          syncBacks();
+
+          // Best-effort cleanup if removed.
+          const mo = new MutationObserver(() => {
+            if (!document.body.contains(root)) {
+              stop();
+              io?.disconnect();
+              mo.disconnect();
+            }
+          });
+          mo.observe(document.body, { childList: true, subtree: true });
+        };
+
         const applyIgAutoScroll = async () => {
           const feed = document.querySelector("[data-ig-feed]");
           if (!feed) return;
@@ -1587,6 +1736,7 @@
         applyStylePresets();
         applyDatingSlider();
         applyBrandGallery();
+        initTeaserDemoStackRotator();
         applyIgAutoScroll();
       })();
     </script>
