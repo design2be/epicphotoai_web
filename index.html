@@ -101,7 +101,7 @@
                 <img
                   class="teaserDemo__img teaserDemo__afterBack teaserDemo__afterBack--a"
                   data-teaser-demo-back-a
-                  src="./assets/presets/preset_private_jet_candid.png"
+                  src="./assets/presets/preset_greenhouse_casual_smile.png"
                   alt=""
                   loading="eager"
                   decoding="async"
@@ -109,7 +109,7 @@
                 <img
                   class="teaserDemo__img teaserDemo__afterBack teaserDemo__afterBack--b"
                   data-teaser-demo-back-b
-                  src="./assets/presets/preset_studio_black_white_portrait.png"
+                  src="./assets/presets/preset_tropical_water_portrait.png"
                   alt=""
                   loading="lazy"
                   decoding="async"
@@ -1465,11 +1465,38 @@
             return el.currentSrc || el.src || "";
           };
 
+          // Use lighter presets for the background stack layers so they feel subtle.
+          const LIGHT_BACKS = [
+            "./assets/presets/preset_greenhouse_casual_smile.png",
+            "./assets/presets/preset_tropical_water_portrait.png",
+            "./assets/presets/preset_jetski_action.png",
+            "./assets/presets/preset_sunny_fitness_low_angle.png",
+            "./assets/presets/preset_travel_doorway_portrait.png",
+          ];
+          let lightIdx = 0;
+
           const syncBacks = () => {
             const s = slides();
-            if (!s.length) return;
-            const next1 = s[1] ? getImgSrc(s[1]) : getImgSrc(s[0]);
-            const next2 = s[2] ? getImgSrc(s[2]) : next1;
+            const current = s[0] ? getImgSrc(s[0]) : "";
+
+            const pool = LIGHT_BACKS.filter(Boolean);
+            if (!pool.length) return;
+
+            const avoid = new Set([current].filter(Boolean));
+            const pick = () => {
+              for (let tries = 0; tries < pool.length; tries++) {
+                const src = pool[lightIdx % pool.length];
+                lightIdx++;
+                if (!src) continue;
+                if (avoid.has(src)) continue;
+                avoid.add(src);
+                return src;
+              }
+              return pool[0];
+            };
+
+            const next1 = pick();
+            const next2 = pick();
             if (backA && next1) backA.src = next1;
             if (backB && next2) backB.src = next2;
           };
