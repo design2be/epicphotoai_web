@@ -71,6 +71,29 @@ a {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 14px;
+}
+
+.siteHeader__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.siteHeader__link:hover {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: underline;
+}
+
+.siteHeader__link:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.55);
+  outline-offset: 3px;
 }
 
 .btnPrimary {
@@ -419,13 +442,11 @@ a {
 
   .teaserDemo {
     padding: 16px 14px 18px;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
-      "steps"
-      "before"
-      "arrow"
-      "after";
-    gap: 12px;
+      "steps steps"
+      "before after";
+    gap: 12px 10px;
   }
 
   .teaserDemo::after {
@@ -452,11 +473,17 @@ a {
     font-size: 13px;
   }
 
+  .teaserDemo__figure--before,
+  .teaserDemo__figure--after {
+    padding: 12px 10px 10px;
+  }
+
+  .teaserDemo__figure--before .teaserDemo__img {
+    width: 100%;
+  }
+
   .teaserDemo__arrow {
-    width: var(--teaserDemo-arrow-w);
-    transform: rotate(90deg);
-    margin: -6px auto;
-    padding: 0;
+    display: none;
   }
 }
 
@@ -477,6 +504,11 @@ a {
 
   .teaserDemo__steps {
     justify-content: center;
+  }
+
+  .teaserDemo__figure--before,
+  .teaserDemo__figure--after {
+    padding: 10px 8px 8px;
   }
 }
 
@@ -1517,11 +1549,17 @@ a {
   }
 
   .styles__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .styleCard {
     grid-column: auto;
+    border-radius: 14px;
+  }
+
+  .styleCard__body {
+    display: none;
   }
 
   .usecase {
@@ -1707,6 +1745,19 @@ a {
 @media (max-width: 560px) {
   .siteFooter__inner {
     gap: 12px;
+  }
+
+  .styles__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .styleCard {
+    border-radius: 14px;
+  }
+
+  .styleCard__body {
+    display: none;
   }
 }
 

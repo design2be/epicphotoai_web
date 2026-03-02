@@ -21,6 +21,7 @@
           />
         </a>
         <div class="siteHeader__nav">
+          <a class="siteHeader__link" href="/app/">Login</a>
           <a class="btnPrimary" href="/app/">Get started</a>
         </div>
       </nav>
@@ -696,7 +697,7 @@
           </div>
 
           <div class="getStarted__actions" aria-label="Get started actions">
-            <a class="btnPrimary" href="/app/"">Get Started</a>
+            <a class="btnPrimary" href="/app/">Get Started</a>
           </div>
         </div>
       </div>
@@ -1181,9 +1182,30 @@
 
         const applyTeaserManifest = async () => {
           try {
-            let images = fixedUrls("teaser");
-            // Best-effort: keep only loadable images (if none load, fall back to SVG placeholders).
-            if (images.length) images = await filterLoadableImages(images, 8);
+            // Use the full presets image manifest for the teaser background grid.
+            // Fallback order:
+            // - presets image manifest (all preset images)
+            // - presets.json (all presets, mapped to images)
+            // - fixed ids (small curated set)
+            // - SVG placeholders
+            let images = await loadImageManifest("./assets/presets/manifest.json");
+
+            if (!images.length) {
+              const presets = await loadPresetsJson("./assets/presets/presets.json");
+              images = presets.map((p) => presetUrlFromId(p?.id)).filter(Boolean);
+            }
+
+            if (!images.length) images = fixedUrls("teaser");
+
+            // De-dupe while preserving order.
+            if (images.length) images = Array.from(new Set(images));
+
+            // Best-effort: if nothing from the pool can be loaded, fall back to SVG placeholders.
+            if (images.length) {
+              const anyLoadable = await filterLoadableImages(images, 8);
+              if (!anyLoadable.length) images = [];
+            }
+
             if (!images.length) images = ["./assets/teaser/01.svg", "./assets/teaser/02.svg", "./assets/teaser/03.svg"];
 
             initTeaserColumns(images);
