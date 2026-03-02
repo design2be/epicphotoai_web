@@ -958,7 +958,7 @@ a {
   height: auto;
   opacity: 0.95;
   filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.55));
-  transform: rotate(-8deg);
+  transform: rotate(-8deg) scale(2);
   z-index: 2;
   pointer-events: none;
 }
@@ -978,7 +978,7 @@ a {
 .usecaseVisual--beforeRight .usecaseVisual__arrow {
   left: auto;
   right: clamp(72px, 16vw, 122px);
-  transform: rotate(8deg) scaleX(-1);
+  transform: rotate(8deg) scaleX(-1) scale(2);
 }
 
 /* Personal branding preview gallery */
