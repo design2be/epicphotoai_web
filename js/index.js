@@ -711,8 +711,10 @@
     if (prefersReducedMotion) return;
 
     const ROTATE_EVERY_MS = 2600;
+    const SLIDE_MS = 650;
     let intervalId = 0;
     let poolIdx = 0;
+    let animating = false;
 
     const getImgSrc = (el) => {
       if (!el) return "";
@@ -725,6 +727,19 @@
       return Array.from(new Set(srcs));
     };
 
+    const pickNextFromPool = (pool, avoidSet) => {
+      if (!Array.isArray(pool) || pool.length < 2) return "";
+      const avoid = avoidSet instanceof Set ? avoidSet : new Set();
+      for (let tries = 0; tries < pool.length; tries++) {
+        const candidate = pool[poolIdx % pool.length] || "";
+        poolIdx++;
+        if (!candidate) continue;
+        if (avoid.has(candidate)) continue;
+        return candidate;
+      }
+      return "";
+    };
+
     const stop = () => {
       if (intervalId) window.clearInterval(intervalId);
       intervalId = 0;
@@ -732,25 +747,42 @@
 
     const rotateOnce = () => {
       if (document.hidden) return;
+      if (animating) return;
       const s = slides();
-      const primary = s[0];
-      if (!primary) return;
+      if (s.length < 2) return;
 
-      const pool = getPool();
-      if (pool.length < 2) return;
+      const first = s[0];
+      const second = s[1];
+      if (!first || !second) return;
 
-      const current = getImgSrc(primary);
-      let next = "";
-      for (let tries = 0; tries < pool.length; tries++) {
-        next = pool[poolIdx % pool.length] || "";
-        poolIdx++;
-        if (!next) continue;
-        if (next === current) continue;
-        break;
-      }
+      animating = true;
 
-      if (!next || next === current) return;
-      primary.src = next;
+      // Slide left so the "next" image comes in from the right.
+      track.style.transition = `transform ${SLIDE_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1)`;
+      track.style.transform = "translate3d(-100%, 0, 0)";
+
+      const onEnd = (e) => {
+        if (e?.target !== track) return;
+        track.removeEventListener("transitionend", onEnd);
+
+        // Reorder slides without animation.
+        track.style.transition = "none";
+        track.appendChild(first);
+        track.style.transform = "translate3d(0%, 0, 0)";
+        // Force reflow so next animation always triggers.
+        track.getBoundingClientRect();
+        track.style.transition = "";
+
+        // Keep variety by refreshing the slide we just moved to the end.
+        const pool = getPool();
+        const avoid = new Set(slides().slice(0, 3).map((el) => getImgSrc(el)).filter(Boolean));
+        const nextSrc = pickNextFromPool(pool, avoid);
+        if (nextSrc) first.src = nextSrc;
+
+        animating = false;
+      };
+
+      track.addEventListener("transitionend", onEnd, { once: false });
     };
 
     const start = () => {
@@ -773,9 +805,7 @@
     if (io) io.observe(root);
     else start();
 
-    // Make sure we never slide the track; only swap the first image.
-    track.style.transition = "none";
-    track.style.transform = "translateX(0%)";
+    track.style.transform = "translate3d(0%, 0, 0)";
 
     // Best-effort cleanup if removed.
     const mo = new MutationObserver(() => {
