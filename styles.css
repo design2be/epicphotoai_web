@@ -382,6 +382,8 @@ a {
   border: 1px solid rgba(15, 23, 42, 0.12);
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+  transform: rotate(-2deg);
+  transform-origin: center;
 }
 
 .teaserDemo__afterBack {
@@ -398,13 +400,13 @@ a {
 .teaserDemo__afterBack--a {
   left: -22%;
   top: 12%;
-  transform: rotate(-2deg);
+  transform: none;
 }
 
 .teaserDemo__afterBack--b {
   left: -12%;
   top: 30%;
-  transform: rotate(-1deg);
+  transform: none;
   opacity: 0.92;
 }
 
