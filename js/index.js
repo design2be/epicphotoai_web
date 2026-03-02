@@ -702,8 +702,6 @@
   const initTeaserDemoStackRotator = () => {
     const root = document.querySelector("[data-teaser-demo-stack]");
     const track = root?.querySelector("[data-teaser-demo-track]");
-    const backA = root?.querySelector("[data-teaser-demo-back-a]");
-    const backB = root?.querySelector("[data-teaser-demo-back-b]");
     if (!root || !track) return;
 
     const slides = () => Array.from(track.children).filter((el) => el && el.nodeType === 1);
@@ -712,13 +710,9 @@
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
     if (prefersReducedMotion) return;
 
-    const SLIDE_EVERY_MS = 2600;
-    const TRANSITION_MS = 460;
-    const EASING = "cubic-bezier(0.2, 0.8, 0.2, 1)";
-
-    let animating = false;
+    const ROTATE_EVERY_MS = 2600;
     let intervalId = 0;
-    let fallbackTimer = 0;
+    let poolIdx = 0;
 
     const getImgSrc = (el) => {
       if (!el) return "";
@@ -726,85 +720,42 @@
       return el.currentSrc || el.src || "";
     };
 
-    // Use lighter presets for the background stack layers so they feel subtle.
-    const LIGHT_BACKS = [
-      "./assets/presets/preset_greenhouse_casual_smile.png",
-      "./assets/presets/preset_tropical_water_portrait.png",
-      "./assets/presets/preset_jetski_action.png",
-      "./assets/presets/preset_sunny_fitness_low_angle.png",
-      "./assets/presets/preset_travel_doorway_portrait.png",
-    ];
-    let lightIdx = 0;
-
-    const syncBacks = () => {
-      const s = slides();
-      const current = s[0] ? getImgSrc(s[0]) : "";
-
-      const pool = LIGHT_BACKS.filter(Boolean);
-      if (!pool.length) return;
-
-      const avoid = new Set([current].filter(Boolean));
-      const pick = () => {
-        for (let tries = 0; tries < pool.length; tries++) {
-          const src = pool[lightIdx % pool.length];
-          lightIdx++;
-          if (!src) continue;
-          if (avoid.has(src)) continue;
-          avoid.add(src);
-          return src;
-        }
-        return pool[0];
-      };
-
-      const next1 = pick();
-      const next2 = pick();
-      if (backA && next1) backA.src = next1;
-      if (backB && next2) backB.src = next2;
+    const getPool = () => {
+      const srcs = slides().map((el) => getImgSrc(el)).filter(Boolean);
+      return Array.from(new Set(srcs));
     };
 
     const stop = () => {
       if (intervalId) window.clearInterval(intervalId);
       intervalId = 0;
-      if (fallbackTimer) window.clearTimeout(fallbackTimer);
-      fallbackTimer = 0;
     };
 
     const rotateOnce = () => {
-      if (animating) return;
       if (document.hidden) return;
-      if (slides().length < 2) return;
+      const s = slides();
+      const primary = s[0];
+      if (!primary) return;
 
-      animating = true;
-      track.style.transition = `transform ${TRANSITION_MS}ms ${EASING}`;
-      track.style.transform = "translateX(-100%)";
+      const pool = getPool();
+      if (pool.length < 2) return;
 
-      let done = false;
-      const onDone = () => {
-        if (done) return;
-        done = true;
-        if (fallbackTimer) window.clearTimeout(fallbackTimer);
-        fallbackTimer = 0;
+      const current = getImgSrc(primary);
+      let next = "";
+      for (let tries = 0; tries < pool.length; tries++) {
+        next = pool[poolIdx % pool.length] || "";
+        poolIdx++;
+        if (!next) continue;
+        if (next === current) continue;
+        break;
+      }
 
-        // Move first -> end, then snap back without transition.
-        const first = track.firstElementChild;
-        if (first) track.appendChild(first);
-        track.style.transition = "none";
-        track.style.transform = "translateX(0%)";
-        // Force reflow so the next transition reliably applies.
-        track.getBoundingClientRect();
-        track.style.transition = "";
-        syncBacks();
-        animating = false;
-      };
-
-      track.addEventListener("transitionend", onDone, { once: true });
-      // Fallback in case transitionend doesn't fire (background tab, etc).
-      fallbackTimer = window.setTimeout(onDone, TRANSITION_MS + 160);
+      if (!next || next === current) return;
+      primary.src = next;
     };
 
     const start = () => {
       stop();
-      intervalId = window.setInterval(() => rotateOnce(), SLIDE_EVERY_MS);
+      intervalId = window.setInterval(() => rotateOnce(), ROTATE_EVERY_MS);
     };
 
     const hasIO = typeof IntersectionObserver !== "undefined";
@@ -822,7 +773,9 @@
     if (io) io.observe(root);
     else start();
 
-    syncBacks();
+    // Make sure we never slide the track; only swap the first image.
+    track.style.transition = "none";
+    track.style.transform = "translateX(0%)";
 
     // Best-effort cleanup if removed.
     const mo = new MutationObserver(() => {
