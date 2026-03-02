@@ -240,7 +240,7 @@ a {
   grid-area: steps;
   counter-reset: teaserStep;
   list-style: none;
-  padding: 12px 10px 8px;
+  padding: 0;
   margin: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -536,7 +536,7 @@ a {
 
   .teaserDemo__step {
     font-size: 15px;
-    padding: 10px 8px 10px;
+    padding: 0;
   }
 
   .teaserDemo__stepIcon {
