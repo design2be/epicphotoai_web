@@ -1186,9 +1186,10 @@
             // - fixed ids (small curated set)
             // - SVG placeholders
             let images = await loadImageManifest("./assets/presets/manifest.json");
+            let presets = [];
 
             if (!images.length) {
-              const presets = await loadPresetsJson("./assets/presets/presets.json");
+              presets = await loadPresetsJson("./assets/presets/presets.json");
               images = presets.map((p) => presetUrlFromId(p?.id)).filter(Boolean);
             }
 
@@ -1207,11 +1208,21 @@
 
             initTeaserColumns(images);
 
-            // Also hydrate any explicit "outcome" images that opt in, deterministically from the fixed pool.
+            // Also hydrate any explicit "outcome" images that opt in.
+            // For the teaser "After" demo, use male-only presets (the teaser grid can use all presets).
             const randomTargets = Array.from(document.querySelectorAll("img[data-random-preset='true']"));
+            if (!presets.length) presets = await loadPresetsJson("./assets/presets/presets.json");
+            let afterImages = presets
+              .filter((p) => String(p?.gender || "").trim().toLowerCase() === "male")
+              .map((p) => presetUrlFromId(p?.id))
+              .filter(Boolean);
+            if (afterImages.length) afterImages = Array.from(new Set(afterImages));
+            if (!afterImages.length) afterImages = fixedUrls("teaser");
+            if (!afterImages.length) afterImages = images;
+
             for (let i = 0; i < randomTargets.length; i++) {
               const img = randomTargets[i];
-              const next = images[i % images.length];
+              const next = afterImages[i % afterImages.length];
               if (!next) continue;
               img.onerror = () => {
                 img.onerror = null;
