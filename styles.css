@@ -238,14 +238,31 @@ a {
 
 .teaserDemo__steps {
   grid-area: steps;
+  counter-reset: teaserStep;
   list-style: none;
-  padding: 0;
+  padding: 10px 8px 6px;
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, var(--teaserDemo-steps-mid-w)) minmax(0, 1fr);
-  align-items: center;
-  column-gap: 14px;
-  row-gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 10px;
+  position: relative;
+}
+
+.teaserDemo__steps::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 32px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(37, 99, 235, 0.25),
+    rgba(124, 58, 237, 0.22),
+    rgba(22, 163, 74, 0.2)
+  );
 }
 
 .teaserDemo::after {
@@ -254,48 +271,80 @@ a {
 }
 
 .teaserDemo__step {
-  display: inline-flex;
+  counter-increment: teaserStep;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 8px;
   font-weight: 650;
   font-size: 18px;
   line-height: 1.15;
   letter-spacing: 0.01em;
   color: rgba(15, 23, 42, 0.92);
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 0 8px 6px;
+  border-radius: 14px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   max-width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1; /* keep above connector line */
 }
 
-.teaserDemo__steps > .teaserDemo__step:nth-child(1) {
-  justify-self: start;
-  margin-left: 18px; /* match image inset padding */
-}
-
-.teaserDemo__steps > .teaserDemo__step:nth-child(2) {
-  justify-self: center;
-  white-space: nowrap;
-}
-
-.teaserDemo__steps > .teaserDemo__step:nth-child(3) {
-  justify-self: end;
-  margin-right: 18px; /* match image inset padding */
-}
-
-.teaserDemo__stepNum {
-  width: 34px;
-  height: 34px;
+.teaserDemo__step::before {
+  content: counter(teaserStep);
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--primary);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 750;
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: rgba(15, 23, 42, 0.92);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.teaserDemo__stepIcon {
+  display: none;
+}
+
+.teaserDemo__stepIcon svg {
+  display: none;
+}
+
+.teaserDemo__steps > .teaserDemo__step:nth-child(1)::before {
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow:
+    0 10px 22px rgba(37, 99, 235, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.teaserDemo__steps > .teaserDemo__step:nth-child(2)::before {
+  border-color: rgba(124, 58, 237, 0.35);
+  box-shadow:
+    0 10px 22px rgba(124, 58, 237, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.teaserDemo__steps > .teaserDemo__step:nth-child(3)::before {
+  border-color: rgba(22, 163, 74, 0.35);
+  box-shadow:
+    0 10px 22px rgba(22, 163, 74, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.teaserDemo__stepText {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: rgba(15, 23, 42, 0.9);
 }
 
 .teaserDemo__figure {
@@ -460,22 +509,37 @@ a {
   }
 
   .teaserDemo__steps {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    flex-wrap: wrap;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .teaserDemo__steps::before {
+    left: 8%;
+    right: 8%;
+    top: 24px;
   }
 
   .teaserDemo__step {
     font-size: 15px;
-    padding: 8px 11px;
+    padding: 0 6px 6px;
   }
 
-  .teaserDemo__stepNum {
-    width: 28px;
-    height: 28px;
+  .teaserDemo__stepIcon {
+    display: none;
+  }
+
+  .teaserDemo__stepIcon svg {
+    display: none;
+  }
+
+  .teaserDemo__step::before {
+    width: 30px;
+    height: 30px;
     font-size: 13px;
+  }
+
+  .teaserDemo__stepText {
+    font-size: 14px;
   }
 
   .teaserDemo__figure--before,
@@ -514,7 +578,19 @@ a {
   }
 
   .teaserDemo__steps {
-    justify-content: center;
+    grid-template-columns: 1fr;
+  }
+
+  .teaserDemo__steps::before {
+    content: none;
+  }
+
+  .teaserDemo__step {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 10px;
+    padding: 6px 6px;
   }
 
   .teaserDemo__figure--before,
