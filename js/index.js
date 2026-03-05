@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   const yearEl = document.getElementById("js-year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
@@ -49,6 +49,26 @@
     const checked = pool.slice(0, Math.max(1, Math.min(pool.length, maxChecks)));
     const results = await Promise.all(checked.map((p) => canLoadImage(p)));
     return checked.filter((p, i) => results[i]);
+  };
+
+  const pickRandomUnique = (pool, count) => {
+    const unique = Array.from(new Set((Array.isArray(pool) ? pool : []).filter(Boolean)));
+    shuffleInPlace(unique);
+    return unique.slice(0, Math.max(0, Math.min(unique.length, Math.floor(count || 0))));
+  };
+
+  const pickLoadableImages = async (pool, desiredCount = 5, maxChecks = 40) => {
+    const list = shuffleInPlace(Array.from(new Set((Array.isArray(pool) ? pool : []).filter(Boolean))));
+    const desired = Math.max(0, Math.floor(desiredCount || 0));
+    const limit = Math.max(0, Math.floor(maxChecks || 0));
+    const out = [];
+    for (let i = 0; i < list.length && i < limit && out.length < desired; i++) {
+      const url = list[i];
+      if (!url) continue;
+      // eslint-disable-next-line no-await-in-loop
+      if (await canLoadImage(url)) out.push(url);
+    }
+    return out;
   };
 
   const loadPresetsJson = async (url) => {
@@ -485,27 +505,50 @@
 
       initTeaserColumns(images);
 
-      // Also hydrate any explicit "outcome" images that opt in.
-      // For the teaser "After" demo, use male-only presets (the teaser grid can use all presets).
+      // Also hydrate the teaser "After" demo.
+      // Requirement: loop of 5 randomly selected pictures from the male presets.
       const randomTargets = Array.from(document.querySelectorAll("img[data-random-preset='true']"));
+      const backA = document.querySelector("img[data-teaser-demo-back-a]");
+      const backB = document.querySelector("img[data-teaser-demo-back-b]");
+
       if (!presets.length) presets = await loadPresetsJson("./assets/presets/presets.json");
-      let afterImages = presets
+
+      // Deduplicate by id (presets.json may contain duplicates).
+      const byId = new Map();
+      for (const p of presets) {
+        const id = String(p?.id || "").trim();
+        if (!id) continue;
+        if (!byId.has(id)) byId.set(id, p);
+      }
+      const uniquePresets = Array.from(byId.values());
+
+      const malePresetUrls = uniquePresets
         .filter((p) => String(p?.gender || "").trim().toLowerCase() === "male")
         .map((p) => presetUrlFromId(p?.id))
         .filter(Boolean);
-      if (afterImages.length) afterImages = Array.from(new Set(afterImages));
-      if (!afterImages.length) afterImages = fixedUrls("teaser");
-      if (!afterImages.length) afterImages = images;
 
-      for (let i = 0; i < randomTargets.length; i++) {
-        const img = randomTargets[i];
-        const next = afterImages[i % afterImages.length];
-        if (!next) continue;
+      // Prefer loadable male preset images; fall back gracefully.
+      let loopImages = await pickLoadableImages(malePresetUrls, 5, 60);
+      if (loopImages.length < 5) loopImages = pickRandomUnique(malePresetUrls, 5);
+      if (loopImages.length < 2) loopImages = fixedUrls("teaser");
+      if (loopImages.length < 2) loopImages = images;
+      if (loopImages.length > 5) loopImages = loopImages.slice(0, 5);
+
+      const fallbackUrl = "./assets/teaser/02.svg";
+      const setSrcSafe = (img, src) => {
+        if (!img || !src) return;
         img.onerror = () => {
           img.onerror = null;
-          img.src = "./assets/teaser/02.svg";
+          img.src = fallbackUrl;
         };
-        img.src = next;
+        img.src = src;
+      };
+
+      for (let i = 0; i < randomTargets.length; i++) setSrcSafe(randomTargets[i], loopImages[i % loopImages.length]);
+      // Keep the visible back stack varied too.
+      if (loopImages.length) {
+        setSrcSafe(backA, loopImages[1] || loopImages[0]);
+        setSrcSafe(backB, loopImages[2] || loopImages[0]);
       }
     } catch {
       // Ignore manifest errors; placeholders remain.
@@ -713,32 +756,7 @@
     const ROTATE_EVERY_MS = 2600;
     const SLIDE_MS = 650;
     let intervalId = 0;
-    let poolIdx = 0;
     let animating = false;
-
-    const getImgSrc = (el) => {
-      if (!el) return "";
-      // Prefer the actually-loaded resource when available.
-      return el.currentSrc || el.src || "";
-    };
-
-    const getPool = () => {
-      const srcs = slides().map((el) => getImgSrc(el)).filter(Boolean);
-      return Array.from(new Set(srcs));
-    };
-
-    const pickNextFromPool = (pool, avoidSet) => {
-      if (!Array.isArray(pool) || pool.length < 2) return "";
-      const avoid = avoidSet instanceof Set ? avoidSet : new Set();
-      for (let tries = 0; tries < pool.length; tries++) {
-        const candidate = pool[poolIdx % pool.length] || "";
-        poolIdx++;
-        if (!candidate) continue;
-        if (avoid.has(candidate)) continue;
-        return candidate;
-      }
-      return "";
-    };
 
     const stop = () => {
       if (intervalId) window.clearInterval(intervalId);
@@ -772,12 +790,6 @@
         // Force reflow so next animation always triggers.
         track.getBoundingClientRect();
         track.style.transition = "";
-
-        // Keep variety by refreshing the slide we just moved to the end.
-        const pool = getPool();
-        const avoid = new Set(slides().slice(0, 3).map((el) => getImgSrc(el)).filter(Boolean));
-        const nextSrc = pickNextFromPool(pool, avoid);
-        if (nextSrc) first.src = nextSrc;
 
         animating = false;
       };
@@ -990,11 +1002,11 @@
     mo.observe(document.body, { childList: true, subtree: true });
   };
 
-  applyTeaserManifest();
-  applyStylePresets();
-  applyDatingSlider();
-  applyBrandGallery();
+  await applyTeaserManifest();
+  await applyStylePresets();
+  await applyDatingSlider();
+  await applyBrandGallery();
   initTeaserDemoStackRotator();
-  applyIgAutoScroll();
+  await applyIgAutoScroll();
 })();
 
