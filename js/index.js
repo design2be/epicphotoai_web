@@ -106,7 +106,7 @@
 
   const presetUrlFromId = (id) => {
     const s = String(id || "").trim();
-    return s ? `./assets/presets/${s}.png` : "";
+    return s ? `./assets/presets/${s}.jpg` : "";
   };
 
   const fixedUrls = (key) => {
@@ -206,7 +206,7 @@
         img.src = fallbackUrl;
       };
       // Convention: preset image file uses preset id.
-      img.src = id ? `./assets/presets/${id}.png` : fallbackUrl;
+      img.src = id ? `./assets/presets/${id}.jpg` : fallbackUrl;
       media.appendChild(img);
 
       const body = document.createElement("div");
